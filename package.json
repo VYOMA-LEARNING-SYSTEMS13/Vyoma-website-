@@ -1,0 +1,13 @@
+{
+  "name": "curio-landing-page",
+  "version": "1.0.0",
+  "description": "CURIO Landing Page - AI & Immersive Tech Learning Platform",
+  "scripts": {
+    "dev": "vite --host --port 5173",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}
