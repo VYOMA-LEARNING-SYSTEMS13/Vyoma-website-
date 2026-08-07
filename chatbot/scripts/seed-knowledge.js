@@ -46,7 +46,8 @@ async function seedKnowledgeDirectory(dirPath = DATA_DIR) {
             source_url: loadedDoc.source_url,
             category: loadedDoc.category,
             content: loadedDoc.content,
-            metadata: loadedDoc.metadata
+            metadata: loadedDoc.metadata,
+            force: true
           });
         }
       } catch (err) {

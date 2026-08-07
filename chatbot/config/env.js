@@ -6,7 +6,7 @@ const envSchema = z.object({
   PORT: z.string().default('5001'),
   
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
-  GEMINI_MODEL: z.string().default('gemini-1.5-flash'),
+  GEMINI_MODEL: z.string().default('gemini-2.0-flash'),
   GEMINI_EMBEDDING_MODEL: z.string().default('text-embedding-004'),
   
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
