@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import logoImg from '../../vyoma final logo.png';
+
+const logoImg = "/vyoma final logo.png";
 
 export default function Header({ currentPath, navigateTo }) {
     const [scrolled, setScrolled] = useState(false);

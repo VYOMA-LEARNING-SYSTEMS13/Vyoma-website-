@@ -1,8 +1,5 @@
 import React from 'react';
 import { Cpu, Layers, BarChart3 } from 'lucide-react';
-import novaImg from '../../product-nova.png';
-import curioImg from '../../product-curio.png';
-import vibeImg from '../../product-vibe.png';
 
 export default function Products({ onOpenModal }) {
     return (
@@ -31,7 +28,7 @@ export default function Products({ onOpenModal }) {
                     </div>
                     <div className="product-mockup">
                         <div className="macbook-frame">
-                            <img src={novaImg} alt="Nova dashboard interface" />
+                            <img src="/product-nova.png" alt="Nova dashboard interface" />
                         </div>
                     </div>
                 </div>
@@ -53,7 +50,7 @@ export default function Products({ onOpenModal }) {
                         </button>
                     </div>
                     <div className="product-mockup">
-                        <img src={curioImg} alt="Curio interactive 3D heart model" className="heart-illustration" />
+                        <img src="/product-curio.png" alt="Curio interactive 3D heart model" className="heart-illustration" />
                     </div>
                 </div>
 
@@ -75,7 +72,7 @@ export default function Products({ onOpenModal }) {
                     </div>
                     <div className="product-mockup">
                         <div className="ipad-frame">
-                            <img src={vibeImg} alt="Vibe dashboard interface" />
+                            <img src="/product-vibe.png" alt="Vibe dashboard interface" />
                         </div>
                     </div>
                 </div>

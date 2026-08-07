@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import logoImg from '../../vyoma final logo.png';
+
+const logoImg = "/vyoma final logo.png";
 
 export default function LogoIntro({ onFinished }) {
     const [status, setStatus] = useState('visible'); // 'visible', 'fading', 'hidden'

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, X, ChevronRight } from 'lucide-react';
+import MagicRings from './MagicRings';
 
 export default function Hero({ introFinished }) {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -157,7 +158,31 @@ export default function Hero({ introFinished }) {
         <section id="home" className="hero-section">
             {/* SVG Animated Energy Ring Portal */}
             <div className="hero-svg-bg" aria-hidden="true">
-                <img src="/images/hero_portal.png" className="hero-portal-image" alt="Glowing online learning energy ring portal" />
+                {!isMobile && (
+                    <MagicRings
+                        color="#fc42ff"
+                        colorTwo="#42fcff"
+                        ringCount={6}
+                        speed={0.5}
+                        attenuation={10}
+                        lineThickness={2}
+                        baseRadius={0.35}
+                        radiusStep={0.1}
+                        scaleRate={0.1}
+                        opacity={0.8}
+                        blur={0}
+                        noiseAmount={0.03}
+                        rotation={0}
+                        ringGap={1.6}
+                        fadeIn={0.7}
+                        fadeOut={0.5}
+                        followMouse={true}
+                        mouseInfluence={0.2}
+                        hoverScale={1.1}
+                        parallax={0.05}
+                        clickBurst={true}
+                    />
+                )}
             </div>
 
             <div className="container hero-container-center">
