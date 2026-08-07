@@ -14,6 +14,7 @@ import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 import Modals from './components/Modals.jsx';
 import OurStory from './components/OurStory.jsx';
+import ChatWidget from './components/ChatWidget.jsx';
 
 export default function App() {
     const [introFinished, setIntroFinished] = useState(false);
@@ -128,6 +129,7 @@ export default function App() {
             </main>
             {!isOurStory && <Footer />}
             <Modals activeModal={activeModal} onClose={() => setActiveModal(null)} />
+            <ChatWidget />
         </>
     );
 }
