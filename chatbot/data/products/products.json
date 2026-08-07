@@ -1,0 +1,51 @@
+[
+  {
+    "id": "prod-nova",
+    "name": "Nova",
+    "category": "products",
+    "tagline": "The Future of Learning for Class 9 & 10 🚀",
+    "description": "Nova is a foundational learning platform designed exclusively for Class 9 and 10 students. It combines immersive 3D models (Physics, Chemistry, Biology, Math), interactive quizzes, and deep performance analysis to make complex concepts simple, engaging, and future-ready.",
+    "targetAudience": "Class 9 & 10 Students, Teachers, and Parents",
+    "keyFeatures": [
+      "Immersive 3D Models (Physics, Chemistry, Biology, Math)",
+      "Interactive gamified quizzes & assessments",
+      "Smart analytics & personalized performance reports",
+      "Conceptual clarity for board exam readiness",
+      "Curiosity-driven interactive simulations"
+    ]
+  },
+  {
+    "id": "prod-curio",
+    "name": "Curio",
+    "category": "products",
+    "website": "https://curioteach.com",
+    "tagline": "Advanced Science Learning for Class 11 & 12 🔬",
+    "description": "Curio is a specialized learning platform crafted for Class 11 and 12 science students. It blends immersive 3D models, interactive quizzes, and in-depth performance analysis to simplify complex scientific concepts and prepare learners for NEET, JEE, and board exams.",
+    "targetAudience": "Class 11 & 12 Science Students (NEP/NEET/JEE aspirants), Teachers, Parents",
+    "keyFeatures": [
+      "Immersive 3D Science Models (Molecules, Reactions, Anatomy, Physics)",
+      "Adaptive quizzes aligned to competitive exam patterns (NEET, JEE)",
+      "Performance Analytics Dashboards",
+      "AI Chat Bot and AI Voice Assistant (Pro plan)"
+    ],
+    "pricing": {
+      "basic": "Rs. 69 / Month",
+      "standard": "Rs. 149 / Month",
+      "pro": "Rs. 299 / Month"
+    }
+  },
+  {
+    "id": "prod-vibe",
+    "name": "Vibe",
+    "category": "products",
+    "tagline": "Connecting Students and Startups Through Internships 💼",
+    "description": "Vibe is an internship provider platform designed to bridge the gap between students and the industry. It connects Class 11, 12, and higher education learners with SMEs and startups for real-world experience and career readiness.",
+    "targetAudience": "Students (Class 11, 12, Higher Ed), Startups, SMEs, and Educational Institutions",
+    "keyFeatures": [
+      "Smart Internship Matching algorithms",
+      "Industry Access portal for SMEs and Startups to post and manage internships",
+      "Practical Skill Development aligned with academics",
+      "Performance Analytics & Outcome Tracking"
+    ]
+  }
+]

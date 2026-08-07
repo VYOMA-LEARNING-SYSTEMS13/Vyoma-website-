@@ -52,9 +52,22 @@ transporter.verify((error, success) => {
     }
 });
 
+// Chatbot Module Imports
+const { validateEnv } = require('./chatbot/config/env');
+const { securityMiddleware } = require('./chatbot/middleware/security.middleware');
+const { errorHandler } = require('./chatbot/middleware/error.middleware');
+const chatbotRouter = require('./chatbot/routes');
+
+// Validate Chatbot Environment Variables on Startup
+validateEnv();
+
 // Middleware
+app.use(securityMiddleware);
 app.use(cors());
 app.use(express.json());
+
+// Mount Chatbot API Router
+app.use('/api/chatbot', chatbotRouter);
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
@@ -157,6 +170,9 @@ app.get('/api/test-email', async (req, res) => {
         });
     }
 });
+
+// Central Error Handling Middleware
+app.use(errorHandler);
 
 // Start Server
 app.listen(PORT, () => {

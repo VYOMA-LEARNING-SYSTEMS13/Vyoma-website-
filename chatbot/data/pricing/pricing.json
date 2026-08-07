@@ -1,0 +1,42 @@
+[
+  {
+    "product": "Curio",
+    "website": "https://curioteach.com",
+    "plans": [
+      {
+        "name": "BASIC",
+        "price": "Rs. 69 / Month",
+        "features": [
+          "3D/AR Models",
+          "Topic Quiz",
+          "Basic Analysis",
+          "Technical Support"
+        ]
+      },
+      {
+        "name": "STANDARD",
+        "price": "Rs. 149 / Month",
+        "features": [
+          "3D/AR Models",
+          "Topic Quiz",
+          "Test Quiz",
+          "AI Chat Bot",
+          "Student Analysis Dashboard",
+          "Technical Support"
+        ]
+      },
+      {
+        "name": "PRO",
+        "price": "Rs. 299 / Month",
+        "features": [
+          "3D/AR Models",
+          "Topic/Test Quiz",
+          "AI Voice Assistant",
+          "AI Chat Bot",
+          "Advance Analysis Student Dashboard",
+          "Technical Support"
+        ]
+      }
+    ]
+  }
+]
