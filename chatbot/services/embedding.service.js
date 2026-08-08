@@ -52,18 +52,26 @@ async function getActiveModel(ai) {
 /**
  * Generate vector embedding for a single search query text
  */
-async function embedQuery(text) {
-  try {
-    const ai = getGenAI();
-    const model = await getActiveModel(ai);
-    const result = await model.embedContent({
-      content: { role: 'user', parts: [{ text }] },
-      outputDimensionality: 768
-    });
-    return result.embedding.values;
-  } catch (error) {
-    logger.error({ err: error.message, textSnippet: text.substring(0, 50) }, 'Error generating query embedding');
-    throw error;
+async function embedQuery(text, maxRetries = 3) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      attempt++;
+      const ai = getGenAI();
+      const model = await getActiveModel(ai);
+      const result = await model.embedContent({
+        content: { role: 'user', parts: [{ text }] },
+        outputDimensionality: 768
+      });
+      return result.embedding.values;
+    } catch (error) {
+      if (attempt >= maxRetries) {
+        logger.error({ err: error.message, textSnippet: text.substring(0, 50) }, 'Error generating query embedding after max retries');
+        throw error;
+      }
+      logger.warn({ attempt, maxRetries, err: error.message }, 'embedQuery attempt failed, retrying...');
+      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+    }
   }
 }
 

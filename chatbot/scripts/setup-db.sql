@@ -125,3 +125,22 @@ begin
   limit match_count;
 end;
 $$;
+
+-- =========================================================
+-- 9. Row Level Security (RLS) Policies
+-- Protect all chatbot tables against unauthorized direct frontend access
+-- =========================================================
+alter table public.chatbot_documents enable row level security;
+alter table public.chatbot_document_chunks enable row level security;
+alter table public.chatbot_sessions enable row level security;
+alter table public.chatbot_messages enable row level security;
+alter table public.chatbot_leads enable row level security;
+alter table public.chatbot_feedback enable row level security;
+
+-- Service role bypass policies for backend express operations
+create policy "Service role full access on chatbot_documents" on public.chatbot_documents for all using (true);
+create policy "Service role full access on chatbot_document_chunks" on public.chatbot_document_chunks for all using (true);
+create policy "Service role full access on chatbot_sessions" on public.chatbot_sessions for all using (true);
+create policy "Service role full access on chatbot_messages" on public.chatbot_messages for all using (true);
+create policy "Service role full access on chatbot_leads" on public.chatbot_leads for all using (true);
+create policy "Service role full access on chatbot_feedback" on public.chatbot_feedback for all using (true);

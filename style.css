@@ -2486,7 +2486,7 @@ section {
 /* Tablet & Mobile Screens */
 @media (max-width: 1024px) {
   .hero-section {
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.94) 100%), url('hero-bg.png');
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.94) 100%), url('/hero-bg.png');
     padding-top: 150px;
     padding-bottom: 80px;
   }

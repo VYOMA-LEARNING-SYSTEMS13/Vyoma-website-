@@ -48,10 +48,17 @@ async function handleGetKnowledge(req, res) {
  * Protected / administrative re-indexing trigger
  */
 async function handleReindexKnowledge(req, res) {
-  // Simple administrative key check
   const adminSecret = req.headers['x-admin-key'];
-  if (process.env.ADMIN_SECRET && adminSecret !== process.env.ADMIN_SECRET) {
-    return res.status(403).json({ success: false, error: { message: 'Unauthorized' } });
+  const configuredSecret = process.env.ADMIN_SECRET;
+
+  if (!configuredSecret || adminSecret !== configuredSecret) {
+    return res.status(403).json({
+      success: false,
+      error: {
+        code: 'CHATBOT_FORBIDDEN',
+        message: 'Unauthorized: Valid X-Admin-Key header required'
+      }
+    });
   }
 
   seedKnowledgeDirectory()

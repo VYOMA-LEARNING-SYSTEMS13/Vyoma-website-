@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, MessageSquare, Send, X, Sparkles, RefreshCw, User, ExternalLink, Minimise, Minimize2 } from 'lucide-react';
+import { Bot, MessageSquare, Send, X, Sparkles, RefreshCw, User, ExternalLink, Minimize2 } from 'lucide-react';
 
 const SUGGESTED_QUESTIONS = [
   'What products do you offer?',
@@ -52,14 +52,20 @@ export default function ChatWidget() {
       content: userMessageText
     };
 
-    setMessages((prev) => [...prev, newUserMsg]);
+    const assistantMsgId = 'asst_' + Date.now();
+    const initialAssistantMsg = {
+      id: assistantMsgId,
+      role: 'assistant',
+      content: '',
+      sources: [],
+      isThinking: true
+    };
+
+    setMessages((prev) => [...prev, newUserMsg, initialAssistantMsg]);
     setIsLoading(true);
 
     try {
-      // Backend API endpoint URL (relative /api/chatbot/chat or full port fallback if dev server proxy is separate)
-      const apiUrl = '/api/chatbot/chat';
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/chatbot/chat/stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -70,44 +76,132 @@ export default function ChatWidget() {
         })
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        let errMessage = "I couldn't process your request right now. Please try again.";
+        try {
+          const errData = await response.json();
+          if (errData.error?.message) errMessage = errData.error.message;
+        } catch (e) {}
 
-      if (data.success && data.data) {
-        if (data.data.sessionId) {
-          setSessionId(data.data.sessionId);
-          localStorage.setItem('vyoma_chatbot_session', data.data.sessionId);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMsgId
+              ? { ...msg, content: errMessage, isThinking: false }
+              : msg
+          )
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let currentEvent = null;
+
+      const wordQueue = [];
+      let isStreamFinished = false;
+
+      const drainInterval = setInterval(() => {
+        if (wordQueue.length > 0) {
+          const nextWord = wordQueue.shift();
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.id === assistantMsgId) {
+                return {
+                  ...msg,
+                  content: msg.content + nextWord,
+                  isThinking: false
+                };
+              }
+              return msg;
+            })
+          );
+        } else if (isStreamFinished) {
+          clearInterval(drainInterval);
+        }
+      }, 20);
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          isStreamFinished = true;
+          break;
         }
 
-        const assistantMsg = {
-          id: data.data.messageId || 'asst_' + Date.now(),
-          role: 'assistant',
-          content: data.data.answer,
-          sources: data.data.sources || []
-        };
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
 
-        setMessages((prev) => [...prev, assistantMsg]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: 'err_' + Date.now(),
-            role: 'assistant',
-            content: data.error?.message || "I couldn't process your request right now. Please try again.",
-            sources: []
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) {
+            currentEvent = null;
+            continue;
           }
-        ]);
+
+          if (trimmed.startsWith('event:')) {
+            currentEvent = trimmed.slice(6).trim();
+          } else if (trimmed.startsWith('data:')) {
+            const dataStr = trimmed.slice(5).trim();
+            try {
+              const payload = JSON.parse(dataStr);
+
+              if (currentEvent === 'token' && payload.token) {
+                const subTokens = payload.token.match(/(\s+|\S+)/g) || [payload.token];
+                wordQueue.push(...subTokens);
+              } else if (currentEvent === 'sources' && payload.sources) {
+                setMessages((prev) =>
+                  prev.map((msg) => {
+                    if (msg.id === assistantMsgId) {
+                      return {
+                        ...msg,
+                        sources: payload.sources
+                      };
+                    }
+                    return msg;
+                  })
+                );
+              } else if (currentEvent === 'done') {
+                if (payload.sessionId) {
+                  setSessionId(payload.sessionId);
+                  localStorage.setItem('vyoma_chatbot_session', payload.sessionId);
+                }
+              } else if (currentEvent === 'error') {
+                isStreamFinished = true;
+                setMessages((prev) =>
+                  prev.map((msg) => {
+                    if (msg.id === assistantMsgId && !msg.content) {
+                      return {
+                        ...msg,
+                        content: payload.error || 'Stream error occurred.',
+                        isThinking: false
+                      };
+                    }
+                    return msg;
+                  })
+                );
+              }
+            } catch (parseErr) {
+              // Ignore non-JSON or partial line buffer chunks
+            }
+          }
+        }
       }
     } catch (err) {
-      console.error('Chat error:', err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: 'err_' + Date.now(),
-          role: 'assistant',
-          content: 'Unable to connect to Vyoma AI Assistant server. Please check your connection.',
-          sources: []
-        }
-      ]);
+      console.error('Chat streaming error:', err);
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.id === assistantMsgId && !msg.content) {
+            return {
+              ...msg,
+              content: 'Unable to connect to Vyoma AI Assistant server. Please check your connection.',
+              isThinking: false
+            };
+          }
+          return msg;
+        })
+      );
     } finally {
       setIsLoading(false);
     }
@@ -197,7 +291,15 @@ export default function ChatWidget() {
                     ...(msg.role === 'user' ? styles.userBubble : styles.assistantBubble)
                   }}
                 >
-                  <div style={styles.messageText}>{msg.content}</div>
+                  {msg.isThinking && !msg.content ? (
+                    <div style={styles.typingIndicator}>
+                      <span style={styles.dot1} />
+                      <span style={styles.dot2} />
+                      <span style={styles.dot3} />
+                    </div>
+                  ) : (
+                    <div style={styles.messageText}>{msg.content}</div>
+                  )}
 
                   {/* Citation badges */}
                   {msg.sources && msg.sources.length > 0 && (
@@ -213,22 +315,6 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
-
-            {/* Thinking / Loading Indicator */}
-            {isLoading && (
-              <div style={styles.messageRow}>
-                <div style={styles.msgAvatar}>
-                  <Sparkles size={14} color="#00f2fe" />
-                </div>
-                <div style={{ ...styles.messageBubble, ...styles.assistantBubble }}>
-                  <div style={styles.typingIndicator}>
-                    <span style={styles.dot1} />
-                    <span style={styles.dot2} />
-                    <span style={styles.dot3} />
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Suggested Questions (Show on 1st message) */}
             {messages.length <= 1 && !isLoading && (

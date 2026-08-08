@@ -31,10 +31,20 @@ async function handleChatStream(req, res) {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders?.();
 
+  let isAborted = false;
+  req.on('close', () => {
+    isAborted = true;
+  });
+
   const sendEvent = (event, data) => {
+    if (isAborted || res.writableEnded || res.destroyed) return;
     res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    if (typeof res.flush === 'function') {
+      res.flush();
+    }
   };
 
   try {
@@ -45,23 +55,30 @@ async function handleChatStream(req, res) {
       sessionId,
       visitorId,
       onToken: (token) => {
-        sendEvent('token', { token });
+        if (!isAborted) {
+          sendEvent('token', { token });
+        }
       },
       onSources: (sources) => {
-        sendEvent('sources', { sources });
+        if (!isAborted) {
+          sendEvent('sources', { sources });
+        }
       }
     });
 
-    sendEvent('done', {
-      sessionId: result.sessionId,
-      messageId: result.messageId
-    });
-
-    res.end();
+    if (!isAborted && !res.writableEnded) {
+      sendEvent('done', {
+        sessionId: result.sessionId,
+        messageId: result.messageId
+      });
+      res.end();
+    }
   } catch (err) {
     logger.error({ err: err.message }, 'SSE Stream failed');
-    sendEvent('error', { error: 'Failed to generate answer stream' });
-    res.end();
+    if (!isAborted && !res.writableEnded) {
+      sendEvent('error', { error: 'Failed to generate answer stream' });
+      res.end();
+    }
   }
 }
 

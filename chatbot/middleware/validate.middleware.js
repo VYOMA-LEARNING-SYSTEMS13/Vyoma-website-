@@ -10,6 +10,7 @@ function validateBody(schema) {
       return sendError(res, errorMessage, 'CHATBOT_VALIDATION_ERROR', 400);
     }
     req.validatedBody = result.data;
+    req.body = result.data;
     next();
   };
 }
