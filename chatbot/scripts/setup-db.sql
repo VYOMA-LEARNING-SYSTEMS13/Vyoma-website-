@@ -138,9 +138,9 @@ alter table public.chatbot_leads enable row level security;
 alter table public.chatbot_feedback enable row level security;
 
 -- Service role bypass policies for backend express operations
-create policy "Service role full access on chatbot_documents" on public.chatbot_documents for all using (true);
-create policy "Service role full access on chatbot_document_chunks" on public.chatbot_document_chunks for all using (true);
-create policy "Service role full access on chatbot_sessions" on public.chatbot_sessions for all using (true);
-create policy "Service role full access on chatbot_messages" on public.chatbot_messages for all using (true);
-create policy "Service role full access on chatbot_leads" on public.chatbot_leads for all using (true);
-create policy "Service role full access on chatbot_feedback" on public.chatbot_feedback for all using (true);
+create policy "Service role full access on chatbot_documents" on public.chatbot_documents to service_role using (true) with check (true);
+create policy "Service role full access on chatbot_document_chunks" on public.chatbot_document_chunks to service_role using (true) with check (true);
+create policy "Service role full access on chatbot_sessions" on public.chatbot_sessions to service_role using (true) with check (true);
+create policy "Service role full access on chatbot_messages" on public.chatbot_messages to service_role using (true) with check (true);
+create policy "Service role full access on chatbot_leads" on public.chatbot_leads to service_role using (true) with check (true);
+create policy "Service role full access on chatbot_feedback" on public.chatbot_feedback to service_role using (true) with check (true);

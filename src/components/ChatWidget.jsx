@@ -300,18 +300,6 @@ export default function ChatWidget() {
                   ) : (
                     <div style={styles.messageText}>{msg.content}</div>
                   )}
-
-                  {/* Citation badges */}
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div style={styles.citationsWrapper}>
-                      <span style={styles.sourcesLabel}>Sources:</span>
-                      {msg.sources.map((src, idx) => (
-                        <span key={idx} style={styles.citationBadge}>
-                          {src.title}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
@@ -369,23 +357,23 @@ export default function ChatWidget() {
   );
 }
 
-// Inline Glassmorphism & Modern Responsive Styling
+// Premium Vyoma Learn / Curio Matching Design System
 const styles = {
   widgetWrapper: {
     position: 'fixed',
     bottom: '24px',
     right: '24px',
     zIndex: 99999,
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
   },
   floatingButton: {
     position: 'relative',
-    width: '60px',
-    height: '60px',
+    width: '62px',
+    height: '62px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+    background: 'linear-gradient(135deg, #5046e5 0%, #7c3aed 100%)',
     border: 'none',
-    boxShadow: '0 8px 24px rgba(0, 242, 254, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 10px 25px rgba(80, 70, 229, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15)',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
@@ -394,36 +382,35 @@ const styles = {
   },
   badgePulse: {
     position: 'absolute',
-    top: '2px',
-    right: '2px',
-    width: '12px',
-    height: '12px',
+    top: '3px',
+    right: '3px',
+    width: '13px',
+    height: '13px',
     backgroundColor: '#10b981',
     borderRadius: '50%',
-    border: '2px solid #0f172a'
+    border: '2px solid #ffffff'
   },
   chatWindow: {
-    width: '380px',
+    width: '390px',
     maxWidth: 'calc(100vw - 32px)',
-    height: '540px',
+    height: '560px',
     maxHeight: 'calc(100vh - 100px)',
-    backgroundColor: 'rgba(15, 23, 42, 0.95)',
-    backdropFilter: 'blur(16px)',
-    borderRadius: '20px',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15)',
+    backgroundColor: '#ffffff',
+    borderRadius: '24px',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 20px 50px rgba(15, 23, 42, 0.15), 0 10px 20px rgba(80, 70, 229, 0.08)',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
     animation: 'fadeInUp 0.3s ease-out'
   },
   header: {
-    padding: '16px',
-    background: 'rgba(30, 41, 59, 0.8)',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+    padding: '16px 20px',
+    background: 'linear-gradient(135deg, #5046e5 0%, #7c3aed 100%)',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    boxShadow: '0 4px 12px rgba(80, 70, 229, 0.15)'
   },
   headerTitleGroup: {
     display: 'flex',
@@ -431,33 +418,38 @@ const styles = {
     gap: '12px'
   },
   avatarBox: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    background: 'rgba(0, 242, 254, 0.12)',
-    border: '1px solid rgba(0, 242, 254, 0.3)',
+    width: '38px',
+    height: '38px',
+    borderRadius: '12px',
+    background: 'rgba(255, 255, 255, 0.2)',
+    backdropFilter: 'blur(8px)',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    border: '1px solid rgba(255, 255, 255, 0.3)'
   },
   headerTitle: {
     color: '#ffffff',
-    fontSize: '15px',
-    fontWeight: '600'
+    fontSize: '16px',
+    fontWeight: '700',
+    fontFamily: "'Outfit', 'Inter', sans-serif",
+    letterSpacing: '-0.01em'
   },
   headerSubtitle: {
-    color: '#94a3b8',
+    color: 'rgba(255, 255, 255, 0.85)',
     fontSize: '12px',
     display: 'flex',
     alignItems: 'center',
-    gap: '6px'
+    gap: '6px',
+    marginTop: '2px'
   },
   onlineDot: {
     width: '7px',
     height: '7px',
     backgroundColor: '#10b981',
     borderRadius: '50%',
-    display: 'inline-block'
+    display: 'inline-block',
+    boxShadow: '0 0 6px #10b981'
   },
   headerActions: {
     display: 'flex',
@@ -465,142 +457,132 @@ const styles = {
     gap: '6px'
   },
   iconHeaderBtn: {
-    background: 'transparent',
+    background: 'rgba(255, 255, 255, 0.15)',
     border: 'none',
     cursor: 'pointer',
-    padding: '6px',
-    borderRadius: '8px',
+    padding: '7px',
+    borderRadius: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'background 0.2s'
+    transition: 'all 0.2s',
+    color: '#ffffff'
   },
   messagesContainer: {
     flex: 1,
-    padding: '16px',
+    padding: '18px',
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px'
+    gap: '14px',
+    backgroundColor: '#f8fafc'
   },
   messageRow: {
     display: 'flex',
     alignItems: 'flex-start',
-    gap: '8px'
+    gap: '10px'
   },
   msgAvatar: {
-    width: '26px',
-    height: '26px',
-    borderRadius: '50%',
-    background: 'rgba(0, 242, 254, 0.15)',
+    width: '28px',
+    height: '28px',
+    borderRadius: '10px',
+    background: 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)',
+    border: '1px solid #c7d2fe',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '2px'
+    marginTop: '2px',
+    flexShrink: 0
   },
   messageBubble: {
     maxWidth: '82%',
-    padding: '12px 14px',
-    borderRadius: '16px',
+    padding: '12px 16px',
+    borderRadius: '18px',
     fontSize: '14px',
-    lineHeight: '1.5',
-    wordBreak: 'break-word'
+    lineHeight: '1.55',
+    wordBreak: 'break-word',
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.03)'
   },
   userBubble: {
-    background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+    background: 'linear-gradient(135deg, #5046e5 0%, #6366f1 100%)',
     color: '#ffffff',
     borderBottomRightRadius: '4px'
   },
   assistantBubble: {
-    background: 'rgba(30, 41, 59, 0.9)',
-    color: '#e2e8f0',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
+    background: '#ffffff',
+    color: '#1e293b',
+    border: '1px solid #e2e8f0',
     borderBottomLeftRadius: '4px'
   },
   messageText: {
     whiteSpace: 'pre-wrap'
   },
-  citationsWrapper: {
-    marginTop: '8px',
-    paddingTop: '6px',
-    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: '4px'
-  },
-  sourcesLabel: {
-    fontSize: '11px',
-    color: '#94a3b8',
-    fontWeight: '500'
-  },
-  citationBadge: {
-    fontSize: '10px',
-    color: '#00f2fe',
-    background: 'rgba(0, 242, 254, 0.1)',
-    border: '1px solid rgba(0, 242, 254, 0.2)',
-    padding: '2px 6px',
-    borderRadius: '4px'
-  },
   typingIndicator: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px',
-    padding: '4px 8px'
+    gap: '5px',
+    padding: '4px 6px'
   },
-  dot1: { width: '6px', height: '6px', backgroundColor: '#00f2fe', borderRadius: '50%' },
-  dot2: { width: '6px', height: '6px', backgroundColor: '#00f2fe', borderRadius: '50%' },
-  dot3: { width: '6px', height: '6px', backgroundColor: '#00f2fe', borderRadius: '50%' },
+  dot1: { width: '6px', height: '6px', backgroundColor: '#5046e5', borderRadius: '50%' },
+  dot2: { width: '6px', height: '6px', backgroundColor: '#5046e5', borderRadius: '50%' },
+  dot3: { width: '6px', height: '6px', backgroundColor: '#5046e5', borderRadius: '50%' },
   suggestionsBox: {
-    marginTop: '12px',
+    marginTop: '10px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '8px'
   },
   suggestionsTitle: {
     fontSize: '12px',
-    color: '#94a3b8',
-    marginBottom: '2px',
-    fontWeight: '500'
+    color: '#64748b',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    marginBottom: '2px'
   },
   suggestionBtn: {
     textAlign: 'left',
-    fontSize: '12px',
-    color: '#e2e8f0',
-    background: 'rgba(30, 41, 59, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    padding: '8px 12px',
-    borderRadius: '10px',
+    fontSize: '13px',
+    color: '#334155',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    padding: '10px 14px',
+    borderRadius: '12px',
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.2s',
+    fontWeight: '500',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
   },
   inputForm: {
-    padding: '12px 16px',
-    background: 'rgba(30, 41, 59, 0.8)',
-    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+    padding: '14px 16px',
+    background: '#ffffff',
+    borderTop: '1px solid #e2e8f0',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '10px'
   },
   textInput: {
     flex: 1,
-    background: 'rgba(15, 23, 42, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '12px',
-    padding: '10px 14px',
-    color: '#ffffff',
+    background: '#f8fafc',
+    border: '1px solid #cbd5e1',
+    borderRadius: '14px',
+    padding: '11px 16px',
+    color: '#0f172a',
     fontSize: '14px',
-    outline: 'none'
+    outline: 'none',
+    transition: 'all 0.2s'
   },
   sendButton: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '12px',
-    background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+    width: '42px',
+    height: '42px',
+    borderRadius: '14px',
+    background: 'linear-gradient(135deg, #5046e5 0%, #7c3aed 100%)',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    boxShadow: '0 4px 10px rgba(80, 70, 229, 0.25)',
+    transition: 'all 0.2s'
   }
 };
