@@ -6,11 +6,12 @@ const envSchema = z.object({
   PORT: z.string().default('5001'),
   
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
-  GEMINI_MODEL: z.string().default('gemini-2.0-flash'),
-  GEMINI_EMBEDDING_MODEL: z.string().default('text-embedding-004'),
+  GEMINI_MODEL: z.string().default('gemini-2.5-flash-lite'),
+  GEMINI_EMBEDDING_MODEL: z.string().default('gemini-embedding-001'),
   
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
+  ADMIN_SECRET: z.string().optional(),
   
   CHATBOT_TOP_K: z.coerce.number().default(5),
   CHATBOT_MIN_SIMILARITY: z.coerce.number().default(0.5),
@@ -34,10 +35,11 @@ function validateEnv() {
       NODE_ENV: process.env.NODE_ENV || 'development',
       PORT: process.env.PORT || '5001',
       GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
-      GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
-      GEMINI_EMBEDDING_MODEL: process.env.GEMINI_EMBEDDING_MODEL || 'text-embedding-004',
+      GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite',
+      GEMINI_EMBEDDING_MODEL: process.env.GEMINI_EMBEDDING_MODEL || 'gemini-embedding-001',
       SUPABASE_URL: process.env.SUPABASE_URL || '',
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+      ADMIN_SECRET: process.env.ADMIN_SECRET || '',
       CHATBOT_TOP_K: Number(process.env.CHATBOT_TOP_K) || 5,
       CHATBOT_MIN_SIMILARITY: Number(process.env.CHATBOT_MIN_SIMILARITY) || 0.5,
       CHATBOT_MAX_HISTORY: Number(process.env.CHATBOT_MAX_HISTORY) || 10,

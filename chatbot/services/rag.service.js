@@ -95,11 +95,12 @@ async function processStreamingChatMessage({ message, sessionId, visitorId, onTo
   const session = await getOrCreateSession(sessionId, visitorId);
   const activeSessionId = session.id;
 
-  await saveMessage({
+  // Save user message asynchronously to prevent blocking streaming start
+  saveMessage({
     sessionId: activeSessionId,
     role: 'user',
     content: message
-  });
+  }).catch((err) => logger.warn({ err: err.message }, 'Failed background save of user message'));
 
   const maxHistory = env.CHATBOT_MAX_HISTORY || 10;
   const recentMessages = await getRecentMessages(activeSessionId, maxHistory);
@@ -109,6 +110,12 @@ async function processStreamingChatMessage({ message, sessionId, visitorId, onTo
     userMessage: message,
     history: historyForRewriter
   });
+
+  console.log('\n================================================================================');
+  console.log('🤖 [RAG PIPELINE INITIATED]');
+  console.log('--------------------------------------------------------------------------------');
+  console.log(`1️⃣  USER QUESTION: "${message}"`);
+  console.log(`2️⃣  STANDALONE SEARCH QUERY: "${standaloneQuery}"`);
 
   const retrievedChunks = await searchKnowledgeBase(standaloneQuery);
   const confidence = evaluateConfidence(retrievedChunks);
@@ -121,9 +128,13 @@ async function processStreamingChatMessage({ message, sessionId, visitorId, onTo
   let fullAnswer = '';
 
   if (!confidence.isConfident && (!retrievedChunks || retrievedChunks.length === 0)) {
+    console.log(`5️⃣  CONFIDENCE CHECK: ❌ LOW SCORE (${((confidence.topScore || 0) * 100).toFixed(1)}%) -> RETURNING FALLBACK RESPONSE`);
+    console.log('================================================================================\n');
     fullAnswer = confidence.fallbackMessage;
     if (onToken) onToken(fullAnswer);
   } else {
+    console.log(`5️⃣  CONFIDENCE CHECK: ✅ CONFIDENT MATCH (${((confidence.topScore || 0) * 100).toFixed(1)}%) -> STREAMING WITH GEMINI 2.0 FLASH`);
+    console.log('================================================================================\n');
     const ragPrompt = buildRAGPrompt({
       contextChunks: retrievedChunks,
       userMessage: message
@@ -141,7 +152,9 @@ async function processStreamingChatMessage({ message, sessionId, visitorId, onTo
       });
     } catch (err) {
       logger.error({ err: err.message }, 'Gemini streaming error in RAG service');
-      fullAnswer = confidence.fallbackMessage;
+      fullAnswer = err.message.includes('Quota') || err.message.includes('429')
+        ? 'Our AI assistant is receiving high traffic right now. Please wait a few seconds and try again!'
+        : confidence.fallbackMessage;
       if (onToken) onToken(fullAnswer);
     }
   }

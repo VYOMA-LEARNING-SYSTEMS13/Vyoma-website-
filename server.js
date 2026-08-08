@@ -34,23 +34,25 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Verify the SMTP connection
-transporter.verify((error, success) => {
-    if (error) {
-        // Redact any potential SMTP credentials or keys from the message text
-        let safeMsg = error.message || '';
-        // If there's an actual password or key, we can scrub a generic pattern or key pattern
-        if (process.env.SMTP_PASSWORD) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+// Verify the SMTP connection only if SMTP_HOST is configured
+if (process.env.SMTP_HOST) {
+    transporter.verify((error, success) => {
+        if (error) {
+            let safeMsg = error.message || '';
+            if (process.env.SMTP_PASSWORD) {
+                safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+            }
+            if (process.env.SMTP_USER) {
+                safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
+            }
+            console.error('SMTP connection verification failed. Error details:', safeMsg);
+        } else {
+            console.log('SMTP connection successful');
         }
-        if (process.env.SMTP_USER) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
-        }
-        console.error('SMTP connection verification failed. Error details:', safeMsg);
-    } else {
-        console.log('SMTP connection successful');
-    }
-});
+    });
+} else {
+    console.log('ℹ️ SMTP_HOST is not configured; email notifications will be logged.');
+}
 
 // Chatbot Module Imports
 const { validateEnv } = require('./chatbot/config/env');
