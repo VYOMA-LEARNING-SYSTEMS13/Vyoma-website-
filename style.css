@@ -396,6 +396,130 @@ section {
   width: 100%;
 }
 
+/* Nav Dropdown styles */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 550;
+  color: var(--dark-light);
+  cursor: pointer;
+  padding: 6px 0;
+  transition: var(--transition);
+}
+
+.dropdown-trigger:hover,
+.dropdown-trigger.active {
+  color: var(--primary);
+}
+
+.dropdown-trigger svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-trigger svg {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--white);
+  min-width: 180px;
+  box-shadow: var(--shadow-xl);
+  border-radius: 12px;
+  padding: 8px 0;
+  z-index: 1001;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.nav-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-item {
+  color: var(--dark-light);
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+/* Mobile responsive styling for dropdown */
+@media (max-width: 991px) {
+  .nav-dropdown {
+    width: 100%;
+    text-align: left;
+  }
+
+  .dropdown-trigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.4);
+  }
+
+  .dropdown-content {
+    position: static;
+    display: none;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    background: rgba(80, 70, 229, 0.02);
+    padding-left: 16px;
+    margin-top: 4px;
+    width: 100%;
+    animation: none;
+  }
+
+  /* On mobile trigger opens content via JavaScript toggle, or we can use sibling hover */
+  .nav-dropdown:hover .dropdown-content,
+  .nav-dropdown.open .dropdown-content {
+    display: block;
+  }
+
+  .dropdown-item {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -1667,6 +1791,31 @@ section {
 
   50% {
     transform: translateX(6px);
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .step-arrow,
+  .step-line-bg {
+    display: none !important;
+  }
+
+  .step-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .steps-container .step-card:last-child {
+    grid-column: span 2;
+    max-width: 250px !important;
+    margin: 0 auto !important;
   }
 }
 
@@ -3278,6 +3427,10 @@ section {
     flex-direction: column;
     gap: 16px;
   }
+
+  .footer .contact-detail-card.half-width {
+    flex: 1 1 auto !important;
+  }
 }
 
 /* ==========================================================================
@@ -3319,14 +3472,16 @@ section {
 
 @media (max-width: 600px) {
   .footer-main-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 32px;
   }
 
-  .footer-brand,
-  .footer-links,
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
   .footer-right-content {
-    grid-column: auto;
+    grid-column: 1 / -1;
   }
 }
 
@@ -3386,6 +3541,7 @@ section {
   display: flex;
   align-items: center;
   gap: 20px;
+  text-align: left;
 }
 
 .info-badge {
@@ -3624,9 +3780,11 @@ section {
 }
 
 .product-modal-close {
-  position: absolute;
-  right: 28px;
-  top: 28px;
+  position: sticky;
+  top: 20px;
+  float: right;
+  margin-top: -20px;
+  margin-right: -20px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -3638,7 +3796,7 @@ section {
   cursor: pointer;
   color: #64748b;
   transition: var(--transition);
-  z-index: 10;
+  z-index: 100;
 }
 
 .product-modal-close:hover {

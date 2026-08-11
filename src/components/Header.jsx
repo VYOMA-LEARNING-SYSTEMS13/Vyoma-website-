@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const logoImg = "/vyoma final logo.png";
 
@@ -7,6 +7,7 @@ export default function Header({ currentPath, navigateTo }) {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -77,15 +78,7 @@ export default function Header({ currentPath, navigateTo }) {
                 <a
                     href="#home"
                     className="logo"
-                    onClick={(e) => {
-                        if (currentPath === '/our-story') {
-                            e.preventDefault();
-                            if (navigateTo) navigateTo('/');
-                            else window.location.href = '/';
-                        } else {
-                            handleLinkClick();
-                        }
-                    }}
+                    onClick={(e) => handleSectionClick(e, 'home')}
                 >
                     <img src={logoImg} className="logo-img" alt="Vyoma Logo" />
                 </a>
@@ -99,11 +92,56 @@ export default function Header({ currentPath, navigateTo }) {
                 </button>
 
                 <nav className={`nav-menu ${menuOpen ? 'open' : ''}`}>
-                    <a href="#home" className={`nav-link ${activeSection === 'home' && currentPath !== '/our-story' ? 'active' : ''}`} onClick={(e) => handleSectionClick(e, 'home')}>Home</a>
-                    <a href="#vision" className={`nav-link ${activeSection === 'vision' && currentPath !== '/our-story' ? 'active' : ''}`} onClick={(e) => handleSectionClick(e, 'vision')}>Vision</a>
-                    <a href="#platform" className={`nav-link ${activeSection === 'platform' && currentPath !== '/our-story' ? 'active' : ''}`} onClick={(e) => handleSectionClick(e, 'platform')}>Platform</a>
-                    <a href="#why-schools" className={`nav-link ${activeSection === 'why-schools' && currentPath !== '/our-story' ? 'active' : ''}`} onClick={(e) => handleSectionClick(e, 'why-schools')}>Features</a>
-                    <a href="#products" className={`nav-link ${activeSection === 'products' && currentPath !== '/our-story' ? 'active' : ''}`} onClick={(e) => handleSectionClick(e, 'products')}>Products</a>
+                    <div className={`nav-dropdown ${dropdownOpen ? 'open' : ''}`}>
+                        <button
+                            className={`dropdown-trigger ${['vision', 'platform', 'why-schools', 'products'].includes(activeSection) && currentPath !== '/our-story' ? 'active' : ''}`}
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                        >
+                            Ecosystem <ChevronDown size={14} />
+                        </button>
+                        <div className="dropdown-content">
+                            <a
+                                href="#vision"
+                                className={`dropdown-item ${activeSection === 'vision' && currentPath !== '/our-story' ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    setDropdownOpen(false);
+                                    handleSectionClick(e, 'vision');
+                                }}
+                            >
+                                Vision
+                            </a>
+                            <a
+                                href="#platform"
+                                className={`dropdown-item ${activeSection === 'platform' && currentPath !== '/our-story' ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    setDropdownOpen(false);
+                                    handleSectionClick(e, 'platform');
+                                }}
+                            >
+                                Platform
+                            </a>
+                            <a
+                                href="#why-schools"
+                                className={`dropdown-item ${activeSection === 'why-schools' && currentPath !== '/our-story' ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    setDropdownOpen(false);
+                                    handleSectionClick(e, 'why-schools');
+                                }}
+                            >
+                                Features
+                            </a>
+                            <a
+                                href="#products"
+                                className={`dropdown-item ${activeSection === 'products' && currentPath !== '/our-story' ? 'active' : ''}`}
+                                onClick={(e) => {
+                                    setDropdownOpen(false);
+                                    handleSectionClick(e, 'products');
+                                }}
+                            >
+                                Products
+                            </a>
+                        </div>
+                    </div>
 
                     {/* Add Our Story page menu link */}
                     <a

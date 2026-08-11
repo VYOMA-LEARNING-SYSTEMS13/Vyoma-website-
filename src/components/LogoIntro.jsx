@@ -6,16 +6,16 @@ export default function LogoIntro({ onFinished }) {
     const [status, setStatus] = useState('visible'); // 'visible', 'fading', 'hidden'
 
     useEffect(() => {
-        // 4 seconds active intro screen
+        // 800ms active intro screen
         const fadeTimer = setTimeout(() => {
             setStatus('fading');
-        }, 4000);
+        }, 800);
 
-        // 800ms fade transition
+        // 400ms fade transition (1200ms total)
         const hideTimer = setTimeout(() => {
             setStatus('hidden');
             if (onFinished) onFinished();
-        }, 4800);
+        }, 1200);
 
         return () => {
             clearTimeout(fadeTimer);

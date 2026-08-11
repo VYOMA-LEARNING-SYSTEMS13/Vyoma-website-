@@ -1,11 +1,31 @@
 import React from 'react';
 import { Brain, GraduationCap, Rocket, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const sectionVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+};
+
+function ScrollAnimatedContainer({ children, className }) {
+    return (
+        <motion.div
+            className={className}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={sectionVariants}
+        >
+            {children}
+        </motion.div>
+    );
+}
 
 export default function OurStory() {
     return (
         <section className="our-story-page">
             {/* Section 1: What We Do */}
-            <div className="story-section bg-white">
+            <ScrollAnimatedContainer className="story-section bg-white">
                 <div className="container story-grid">
                     {/* Left Column: What We Do Text and Features */}
                     <div className="story-content-left">
@@ -111,10 +131,10 @@ export default function OurStory() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </ScrollAnimatedContainer>
 
             {/* Section 2: Who We Are */}
-            <div className="story-section bg-light-translucent border-section-divider">
+            <ScrollAnimatedContainer className="story-section bg-light-translucent border-section-divider">
                 <div className="container">
                     {/* Top Row: Image + Text Side-by-Side */}
                     <div className="story-grid reverse-mobile align-start">
@@ -198,10 +218,10 @@ export default function OurStory() {
                         Together, <strong>CURIO.AI</strong>, <strong>NOVA</strong>, and <strong>VIBE</strong> form the Vyoma ecosystem—supporting learners from the classroom to successful careers.
                     </div>
                 </div>
-            </div>
+            </ScrollAnimatedContainer>
 
             {/* Section 3: Join Our Team (Card Container) */}
-            <div className="story-section bg-white story-join-section">
+            <ScrollAnimatedContainer className="story-section bg-white story-join-section">
                 <div className="container">
                     <div className="story-join-card shadow-premium">
                         <div className="story-badge-header centered">
@@ -235,10 +255,10 @@ export default function OurStory() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </ScrollAnimatedContainer>
 
             {/* Section 4: Life At Vyoma (Photo Gallery) */}
-            <div className="story-section bg-light-translucent border-section-divider story-life-section">
+            <ScrollAnimatedContainer className="story-section bg-light-translucent border-section-divider story-life-section">
                 <div className="container text-center">
                     <div className="story-badge-header">
                         <span className="story-mini-title">LIFE AT VYOMA</span>
@@ -265,7 +285,7 @@ export default function OurStory() {
                         ))}
                     </div>
                 </div>
-            </div>
+            </ScrollAnimatedContainer>
         </section>
     );
 }

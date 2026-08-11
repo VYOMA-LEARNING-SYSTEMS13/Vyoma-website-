@@ -15,6 +15,26 @@ import Footer from './components/Footer.jsx';
 import Modals from './components/Modals.jsx';
 import OurStory from './components/OurStory.jsx';
 
+import { motion } from 'framer-motion';
+
+const sectionVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+};
+
+function ScrollAnimatedSection({ children }) {
+    return (
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={sectionVariants}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
 export default function App() {
     const [introFinished, setIntroFinished] = useState(false);
     const [activeModal, setActiveModal] = useState(null);
@@ -113,20 +133,40 @@ export default function App() {
                     <OurStory />
                 ) : (
                     <>
-                        <Hero introFinished={introFinished} />
-                        <Vision />
-                        <Platform />
-                        <Features />
-                        <Products onOpenModal={setActiveModal} />
-                        <Experience />
-                        <Team />
-                        <Partners />
-                        <FAQ />
-                        <Contact />
+                        <ScrollAnimatedSection>
+                            <Hero introFinished={introFinished} />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Vision />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Platform />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Features />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Products onOpenModal={setActiveModal} />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Experience />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Team />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Partners />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <FAQ />
+                        </ScrollAnimatedSection>
+                        <ScrollAnimatedSection>
+                            <Contact />
+                        </ScrollAnimatedSection>
                     </>
                 )}
             </main>
-            {!isOurStory && <Footer />}
+            {!isOurStory && <Footer navigateTo={navigateTo} />}
             <Modals activeModal={activeModal} onClose={() => setActiveModal(null)} />
         </>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Footer() {
+export default function Footer({ navigateTo }) {
     return (
         <footer className="footer">
             <div className="container footer-main-wrapper">
@@ -75,16 +75,16 @@ export default function Footer() {
                     <h4>Explore</h4>
                     <ul>
                         <li>
-                            <a href="#vision">Our Vision</a>
+                            <a href="#vision">Vision</a>
                         </li>
                         <li>
-                            <a href="#products">Ecosystem</a>
+                            <a href="#platform">Platform</a>
                         </li>
                         <li>
-                            <a href="#faq">FAQs</a>
+                            <a href="#why-schools">Features</a>
                         </li>
                         <li>
-                            <a href="#partners">Partners</a>
+                            <a href="#products">Products</a>
                         </li>
                     </ul>
                 </div>
@@ -94,13 +94,7 @@ export default function Footer() {
                     <h4>Company</h4>
                     <ul>
                         <li>
-                            <a href="#team">Leadership</a>
-                        </li>
-                        <li>
-                            <a href="#about">About Us</a>
-                        </li>
-                        <li>
-                            <a href="https://careers.curioteach.com/" target="_blank" rel="noopener noreferrer">Careers</a>
+                            <a href="/our-story" onClick={(e) => { e.preventDefault(); navigateTo('/our-story'); }}>Our Story</a>
                         </li>
                         <li>
                             <a href="#contact">Contact</a>
@@ -210,7 +204,7 @@ export default function Footer() {
                                         </svg>
                                     </div>
                                     <div className="contact-detail-info">
-                                        <p><a href="mailto:info@vyoma.com" style={{ color: 'inherit', textDecoration: 'none' }}>info@vyoma.com</a></p>
+                                        <p><a href="mailto:info@vyomalearn.com" style={{ color: 'inherit', textDecoration: 'none' }}>info@vyomalearn.com</a></p>
                                     </div>
                                 </div>
                             </div>

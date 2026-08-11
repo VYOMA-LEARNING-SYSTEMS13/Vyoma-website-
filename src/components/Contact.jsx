@@ -101,7 +101,7 @@ export default function Contact() {
                             <div className="info-text">
                                 <h5>Email Us</h5>
                                 <p>
-                                    <a href="mailto:info@vyoma.com">info@vyoma.com</a>
+                                    <a href="mailto:info@vyomalearn.com">info@vyomalearn.com</a>
                                 </p>
                             </div>
                         </div>
