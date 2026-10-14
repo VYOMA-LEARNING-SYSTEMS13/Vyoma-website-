@@ -1,0 +1,685 @@
+/* ==========================================================================
+   HERO REDESIGN — Pixel-Accurate Scoped Styles
+   Strictly scoped to .hero-section and header elements on home page.
+   ========================================================================== */
+
+/* ── Hero Section Wrapper ─────────────────────────────────────────── */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 90px;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ensure Framer Motion parent wrapper doesn't leave hero hidden at initial load */
+main > div:first-child {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* ── Ambient Lighting and Glows ───────────────────────────────────── */
+.hero-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.hero-glow-heart {
+  top: 32%;
+  left: 10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(56, 189, 248, 0.08) 40%, rgba(255, 255, 255, 0) 70%);
+  transform: translateY(-50%);
+}
+
+.hero-glow-sun {
+  bottom: -40px;
+  left: -40px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.08) 40%, rgba(255, 255, 255, 0) 70%);
+}
+
+.hero-glow-earth {
+  bottom: -40px;
+  right: -40px;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(59, 130, 246, 0.08) 45%, rgba(255, 255, 255, 0) 70%);
+}
+
+.hero-glow-molecule {
+  top: 5%;
+  right: 6%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(99, 102, 241, 0.06) 40%, rgba(255, 255, 255, 0) 70%);
+}
+
+.hero-glow-center {
+  top: 45%;
+  left: 50%;
+  width: 600px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(241, 245, 254, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+/* ── SVG Orbital Connectors ───────────────────────────────────────── */
+.hero-orbital-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Floating Glowing Particles ───────────────────────────────────── */
+.hero-particles-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.hero-particle-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── 3D Scientific Objects Layer ──────────────────────────────────── */
+.hero-3d-objects-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hero-obj {
+  position: absolute;
+  display: block;
+}
+
+.hero-3d-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 1. DNA Double Helix (Top-Left) */
+.hero-obj-dna {
+  top: 1%;
+  left: -0.5%;
+  width: clamp(100px, 9.5vw, 150px);
+}
+
+/* 2. Anatomical Human Heart (Left-Center) */
+.hero-obj-heart {
+  top: 36%;
+  left: 11%;
+  transform: translateY(-50%);
+  width: clamp(170px, 16vw, 245px);
+}
+
+/* 3. Solar System with Sun & Planets (Bottom-Left) */
+.hero-obj-solar {
+  bottom: -2.5%;
+  left: -2%;
+  width: clamp(270px, 27vw, 420px);
+}
+
+/* 4. Molecule Ball-and-Stick (Top-Right) */
+.hero-obj-molecule {
+  top: 7%;
+  right: 7%;
+  width: clamp(155px, 15vw, 235px);
+}
+
+/* 5. 3D Atom Orbital Model (Right Top) */
+.hero-obj-atom {
+  top: 20%;
+  right: 1.5%;
+  width: clamp(75px, 7.5vw, 115px);
+}
+
+/* 6. Futuristic Science Badge / Card (Right Center) */
+.hero-obj-card {
+  top: 48%;
+  right: 10.5%;
+  transform: translateY(-50%);
+  width: clamp(115px, 11vw, 175px);
+}
+
+/* 7. Laboratory Flask with Purple Liquid (Right Lower) */
+.hero-obj-flask {
+  top: 50%;
+  right: 1.2%;
+  transform: translateY(-50%);
+  width: clamp(90px, 8.8vw, 135px);
+}
+
+/* 8. 3D Earth Globe with Rings (Bottom-Right) */
+.hero-obj-earth {
+  bottom: -5%;
+  right: -3%;
+  width: clamp(230px, 23vw, 360px);
+}
+
+/* ── Central Hero Content ─────────────────────────────────────────── */
+.hero-container-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Pill Badge */
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f4fe;
+  color: #4f46e5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(199, 210, 254, 0.7);
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.06);
+}
+
+/* Headline */
+.hero-headline {
+  font-family: var(--font-title, 'Outfit', -apple-system, sans-serif);
+  font-size: clamp(2.3rem, 4.3vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 18px;
+  text-align: center;
+  min-height: calc(3 * 1.15em);
+}
+
+.hero-headline-line {
+  display: block;
+  min-height: 1.15em;
+}
+
+.hero-headline-gradient {
+  background: linear-gradient(115deg, #8b5cf6 15%, #06b6d4 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-headline-dot {
+  color: #0f172a;
+  -webkit-text-fill-color: #0f172a;
+}
+
+.hero-typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 300;
+  color: #4f46e5;
+  animation: hero-cursor-blink 0.8s infinite;
+  user-select: none;
+  vertical-align: baseline;
+}
+
+@keyframes hero-cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Description */
+.hero-description {
+  font-family: var(--font-body, 'Inter', -apple-system, sans-serif);
+  font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+  line-height: 1.65;
+  color: #64748b;
+  max-width: 530px;
+  margin: 0 auto 30px;
+  text-align: center;
+}
+
+/* CTA Buttons */
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.96rem;
+  padding: 13px 26px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -4px rgba(79, 70, 229, 0.45), 0 4px 10px -2px rgba(79, 70, 229, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -4px rgba(79, 70, 229, 0.5), 0 6px 14px -2px rgba(79, 70, 229, 0.25);
+  color: #ffffff;
+}
+
+.hero-btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.hero-btn-primary:hover .hero-btn-arrow {
+  transform: translateX(3px);
+}
+
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #ffffff;
+  color: #0f172a !important;
+  font-weight: 600;
+  font-size: 0.96rem;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.hero-btn-secondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(199, 210, 254, 1);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.08);
+}
+
+.hero-play-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #4f46e5;
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* Feature Strip */
+.hero-features-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-feature-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hero-feature-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  color: #4f46e5;
+}
+
+.hero-feature-text {
+  font-size: 0.83rem;
+  font-weight: 550;
+  color: #475569;
+}
+
+.hero-feature-separator {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+/* ── Video Modal ─────────────────────────────────────────────────── */
+.video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.video-modal-content {
+  position: relative;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.video-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.video-modal-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.video-player-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+.video-player-element {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Header Styling Refinements ──────────────────────────────────── */
+.header .btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.28);
+  border: none;
+  color: #fff !important;
+}
+
+.header .nav-link.active::after {
+  background: #4f46e5;
+  height: 2.5px;
+  border-radius: 2px;
+}
+
+/* ── Responsive Adaptations ───────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .hero-obj-dna {
+    width: clamp(80px, 8vw, 120px);
+  }
+  .hero-obj-heart {
+    left: 8%;
+    width: clamp(140px, 14vw, 200px);
+  }
+  .hero-obj-solar {
+    width: clamp(220px, 22vw, 320px);
+  }
+  .hero-obj-molecule {
+    right: 5%;
+    width: clamp(130px, 13vw, 190px);
+  }
+  .hero-obj-card {
+    right: 8%;
+    width: clamp(100px, 10vw, 145px);
+  }
+  .hero-obj-earth {
+    width: clamp(190px, 19vw, 290px);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+  .hero-obj-dna,
+  .hero-obj-atom,
+  .hero-obj-card,
+  .hero-obj-flask {
+    opacity: 0.35;
+  }
+  .hero-obj-heart {
+    left: 3%;
+    opacity: 0.45;
+  }
+  .hero-obj-molecule {
+    right: 3%;
+    opacity: 0.45;
+  }
+  .hero-obj-solar {
+    opacity: 0.45;
+  }
+  .hero-obj-earth {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding-top: 110px;
+    padding-bottom: 50px;
+  }
+  .hero-obj-dna,
+  .hero-obj-atom,
+  .hero-obj-card,
+  .hero-obj-flask {
+    display: none;
+  }
+  .hero-obj-heart {
+    left: -20px;
+    width: 120px;
+    opacity: 0.3;
+  }
+  .hero-obj-molecule {
+    right: -20px;
+    width: 110px;
+    opacity: 0.3;
+  }
+  .hero-obj-solar {
+    left: -30px;
+    bottom: -10px;
+    width: 180px;
+    opacity: 0.3;
+  }
+  .hero-obj-earth {
+    right: -30px;
+    bottom: -20px;
+    width: 170px;
+    opacity: 0.3;
+  }
+  .hero-features-strip {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hero-feature-separator {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   SUBTLE FLOATING ANIMATIONS — 3D Scientific Objects
+   Applied to .hero-3d-img (the <img> inside each wrapper) so the wrapper's
+   existing transform: translateY(-50%) positioning is never disturbed.
+   All animations are GPU-composited via translate3d for zero layout cost.
+   ========================================================================== */
+
+/* --- Keyframe Definitions --- */
+
+/* Float A: soft up-down with slight lateral drift — heart */
+@keyframes float-heart {
+  0%   { transform: translate3d(0px,   0px,   0); }
+  25%  { transform: translate3d(4px,  -14px,  0); }
+  50%  { transform: translate3d(-2px, -18px,  0); }
+  75%  { transform: translate3d(-5px,  -8px,  0); }
+  100% { transform: translate3d(0px,   0px,   0); }
+}
+
+/* Float B: gentle pure vertical — DNA */
+@keyframes float-dna {
+  0%   { transform: translate3d(0, 0px,   0); }
+  50%  { transform: translate3d(0, -16px, 0); }
+  100% { transform: translate3d(0, 0px,   0); }
+}
+
+/* Float C: slow large vertical — solar system */
+@keyframes float-solar {
+  0%   { transform: translate3d(0, 0px,   0); }
+  40%  { transform: translate3d(0, -15px, 0); }
+  70%  { transform: translate3d(0, -10px, 0); }
+  100% { transform: translate3d(0, 0px,   0); }
+}
+
+/* Float D: mid-speed vertical with tiny x-drift — molecule */
+@keyframes float-molecule {
+  0%   { transform: translate3d(0px,   0px,   0); }
+  35%  { transform: translate3d(-4px, -14px,  0); }
+  65%  { transform: translate3d(3px,  -17px,  0); }
+  100% { transform: translate3d(0px,   0px,   0); }
+}
+
+/* Float E: small fast flutter — atom */
+@keyframes float-atom {
+  0%   { transform: translate3d(0, 0px,   0); }
+  50%  { transform: translate3d(0, -14px, 0); }
+  100% { transform: translate3d(0, 0px,   0); }
+}
+
+/* Float F: gentle vertical — card */
+@keyframes float-card {
+  0%   { transform: translate3d(0px,   0px,   0); }
+  45%  { transform: translate3d(-3px, -15px,  0); }
+  100% { transform: translate3d(0px,   0px,   0); }
+}
+
+/* Float G: slight sway — flask */
+@keyframes float-flask {
+  0%   { transform: translate3d(0px,   0px,   0); }
+  30%  { transform: translate3d(3px,  -12px,  0); }
+  60%  { transform: translate3d(-3px, -16px,  0); }
+  100% { transform: translate3d(0px,   0px,   0); }
+}
+
+/* Float H: deep slow drift — earth */
+@keyframes float-earth {
+  0%   { transform: translate3d(0px,  0px,   0); }
+  50%  { transform: translate3d(5px, -16px,  0); }
+  100% { transform: translate3d(0px,  0px,   0); }
+}
+
+/* --- Per-object Animation Rules (target the <img>, not the wrapper) --- */
+
+.hero-obj-heart .hero-3d-img {
+  animation: float-heart 6s ease-in-out infinite;
+}
+
+.hero-obj-dna .hero-3d-img {
+  animation: float-dna 8s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+.hero-obj-solar .hero-3d-img {
+  animation: float-solar 9s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+.hero-obj-molecule .hero-3d-img {
+  animation: float-molecule 7s ease-in-out infinite;
+  animation-delay: 2.0s;
+}
+
+.hero-obj-atom .hero-3d-img {
+  animation: float-atom 5.5s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+.hero-obj-card .hero-3d-img {
+  animation: float-card 7.5s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+
+.hero-obj-flask .hero-3d-img {
+  animation: float-flask 6.5s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+
+.hero-obj-earth .hero-3d-img {
+  animation: float-earth 8.5s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+/* --- Accessibility: Disable all motion for users who prefer it --- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-obj-heart .hero-3d-img,
+  .hero-obj-dna .hero-3d-img,
+  .hero-obj-solar .hero-3d-img,
+  .hero-obj-molecule .hero-3d-img,
+  .hero-obj-atom .hero-3d-img,
+  .hero-obj-card .hero-3d-img,
+  .hero-obj-flask .hero-3d-img,
+  .hero-obj-earth .hero-3d-img {
+    animation: none;
+  }
+}
