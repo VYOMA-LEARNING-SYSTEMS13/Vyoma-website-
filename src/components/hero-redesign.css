@@ -400,6 +400,8 @@ main > div:first-child {
   justify-content: center;
   z-index: 9999;
   padding: 20px;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .video-modal-content {
@@ -410,6 +412,7 @@ main > div:first-child {
   max-width: 900px;
   width: 100%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  touch-action: auto;
 }
 
 .video-modal-close {
@@ -531,24 +534,24 @@ main > div:first-child {
   .hero-obj-heart {
     left: -20px;
     width: 120px;
-    opacity: 0.3;
+    opacity: 0.9;
   }
   .hero-obj-molecule {
     right: -20px;
     width: 110px;
-    opacity: 0.3;
+    opacity: 0.9;
   }
   .hero-obj-solar {
     left: -30px;
     bottom: -10px;
     width: 180px;
-    opacity: 0.3;
+    opacity: 0.9;
   }
   .hero-obj-earth {
     right: -30px;
     bottom: -20px;
     width: 170px;
-    opacity: 0.3;
+    opacity: 0.9;
   }
   .hero-features-strip {
     flex-direction: column;

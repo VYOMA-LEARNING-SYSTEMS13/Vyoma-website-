@@ -70,6 +70,38 @@ export default function Hero({ introFinished }) {
   const line3Dot = charIndex >= 40 ? "." : "";
   const activeLine = charIndex <= 15 ? 1 : charIndex <= 30 ? 2 : 3;
 
+  // Lock background scroll when video modal is open
+  useEffect(() => {
+    if (!isVideoModalOpen) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyPaddingRight = document.body.style.paddingRight;
+
+    // Prevent layout shift from scrollbar disappearing
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsVideoModalOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.paddingRight = originalBodyPaddingRight;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isVideoModalOpen]);
+
   const handleWatchDemoClick = (e) => {
     e.preventDefault();
     const isDesktop = window.innerWidth > 768;
