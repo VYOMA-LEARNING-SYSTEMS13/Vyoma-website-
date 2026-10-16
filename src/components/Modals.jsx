@@ -5,12 +5,24 @@ export default function Modals({ activeModal, onClose }) {
     useEffect(() => {
         if (activeModal) {
             document.body.classList.add('modal-open');
+            document.documentElement.classList.add('modal-open');
+
+            const handleWheel = (e) => {
+                if (e.target.classList && e.target.classList.contains('product-modal-overlay')) {
+                    e.preventDefault();
+                }
+            };
+
+            window.addEventListener('wheel', handleWheel, { passive: false });
+            return () => {
+                document.body.classList.remove('modal-open');
+                document.documentElement.classList.remove('modal-open');
+                window.removeEventListener('wheel', handleWheel);
+            };
         } else {
             document.body.classList.remove('modal-open');
+            document.documentElement.classList.remove('modal-open');
         }
-        return () => {
-            document.body.classList.remove('modal-open');
-        };
     }, [activeModal]);
 
     // Handle escape key to close

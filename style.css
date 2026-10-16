@@ -3741,6 +3741,13 @@ section {
 /* ==========================================================================
    PRODUCT DETAIL MODALS (NOVA, CURIO, VIBE)
    ========================================================================== */
+/* Freeze and stick background when product details modal is open */
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
 .product-modal-overlay {
   position: fixed;
   inset: 0;
@@ -3754,6 +3761,8 @@ section {
   pointer-events: none;
   transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 24px;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .product-modal-overlay.active {
@@ -3768,6 +3777,9 @@ section {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   padding: 40px;
   position: relative;
   transform: translateY(24px) scale(0.98);
