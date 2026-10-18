@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ChevronRight, Play, X, Cpu, Gamepad2, FlaskConical } from "lucide-react";
 import "./hero-redesign.css";
+import SolarSystemGLB from "./3d/SolarSystemGLB.jsx";
+import MoleculeGLB from "./3d/MoleculeGLB.jsx";
+import DnaHelixGLB from "./3d/DnaHelixGLB.jsx";
+import AtomGLB from "./3d/AtomGLB.jsx";
+import TrigonometryGLB from "./3d/TrigonometryGLB.jsx";
+import CosineFunctionGLB from "./3d/CosineFunctionGLB.jsx";
+import EarthGLB from "./3d/EarthGLB.jsx";
 
 const FULL_TEXT = {
   line1: "Learning Beyond",
@@ -184,19 +191,14 @@ export default function Hero({ introFinished }) {
       <div className="hero-3d-objects-layer" aria-hidden="true">
         {/* 1. DNA Double Helix (Top-Left) */}
         <div className="hero-obj hero-obj-dna">
-          <img
-            src="/images/hero_3d/dna_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <DnaHelixGLB fallbackSrc="/images/hero_3d/dna_3d_enhanced.png" />
         </div>
 
         {/* 2. Anatomical Human Heart (Left-Center) */}
         <div className="hero-obj hero-obj-heart">
           <img
-            src="/images/hero_3d/heart_3d.png"
-            alt=""
+            src="/images/hero_3d/heart_3d_enhanced.png"
+            alt="Human Heart 3D Model"
             loading="eager"
             className="hero-3d-img"
           />
@@ -204,62 +206,32 @@ export default function Hero({ introFinished }) {
 
         {/* 3. Solar System with Sun & Planets (Bottom-Left) */}
         <div className="hero-obj hero-obj-solar">
-          <img
-            src="/images/hero_3d/solar_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <SolarSystemGLB fallbackSrc="/images/hero_3d/solar_3d_enhanced.png" />
         </div>
 
         {/* 4. Molecule Ball-and-Stick (Top-Right) */}
         <div className="hero-obj hero-obj-molecule">
-          <img
-            src="/images/hero_3d/molecule_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <MoleculeGLB fallbackSrc="/images/hero_3d/molecule_3d_enhanced.png" />
         </div>
 
         {/* 5. 3D Atom Orbital Model (Right Top) */}
         <div className="hero-obj hero-obj-atom">
-          <img
-            src="/images/hero_3d/atom_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <AtomGLB fallbackSrc="/images/hero_3d/atom_3d_enhanced.png" />
         </div>
 
-        {/* 6. Futuristic Science Badge / Card (Right Center) */}
+        {/* 6. Trigonometry Mathematical Model (Right Center) */}
         <div className="hero-obj hero-obj-card">
-          <img
-            src="/images/hero_3d/card_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <TrigonometryGLB fallbackSrc="/images/hero_3d/card_3d_enhanced.png" />
         </div>
 
-        {/* 7. Laboratory Flask with Purple Liquid (Right Lower) */}
-        <div className="hero-obj hero-obj-flask">
-          <img
-            src="/images/hero_3d/flask_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+        {/* 7. Trigonometry Cosine Function Wave (Right Lower) */}
+        <div className="hero-obj hero-obj-cosine">
+          <CosineFunctionGLB fallbackSrc="/images/hero_3d/card_3d_enhanced.png" />
         </div>
 
-        {/* 8. 3D Earth Globe with Rings (Bottom-Right) */}
+        {/* 8. 3D Earth Globe with Atmosphere (Bottom-Right) */}
         <div className="hero-obj hero-obj-earth">
-          <img
-            src="/images/hero_3d/earth_3d.png"
-            alt=""
-            loading="eager"
-            className="hero-3d-img"
-          />
+          <EarthGLB fallbackSrc="/images/hero_3d/earth_3d_enhanced.png" />
         </div>
       </div>
 
