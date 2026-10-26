@@ -5,17 +5,12 @@ import SolarSystemGLB from "./3d/SolarSystemGLB.jsx";
 import MoleculeGLB from "./3d/MoleculeGLB.jsx";
 import DnaHelixGLB from "./3d/DnaHelixGLB.jsx";
 import AtomGLB from "./3d/AtomGLB.jsx";
-import TrigonometryGLB from "./3d/TrigonometryGLB.jsx";
 import CosineFunctionGLB from "./3d/CosineFunctionGLB.jsx";
 import EarthGLB from "./3d/EarthGLB.jsx";
 
-const FULL_TEXT = {
-  line1: "Learning Beyond",
-  line2: "the Limits of a",
-  line3: "Classroom",
-  dot: ".",
-};
-const TOTAL_CHARS = 40;
+const TYPEWRITER_WORDS = ["Learning", "Science", "Innovation", "Technology"];
+const STATIC_LINE_1 = "Where Curiosity Meets";
+const STATIC_LINE_2 = "the Future of";
 
 /* Floating glowing beads matching the reference image composition */
 const PARTICLES = [
@@ -46,36 +41,58 @@ const FEATURES = [
 export default function Hero({ introFinished }) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [videoSrc, setVideoSrc] = useState("/hero_desktop.mp4");
+  const [wordIndex, setWordIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
+  // Check prefers-reduced-motion media query
   useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Character-by-character typewriter-and-erase animation for final word
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const currentWord = TYPEWRITER_WORDS[wordIndex];
     let timer;
-    if (!isDeleting && charIndex < TOTAL_CHARS) {
+
+    if (!isDeleting && charIndex < currentWord.length) {
+      // 1. Typing: next character (85ms per character)
       timer = setTimeout(() => {
         setCharIndex((prev) => prev + 1);
-      }, 55);
-    } else if (!isDeleting && charIndex === TOTAL_CHARS) {
+      }, 85);
+    } else if (!isDeleting && charIndex === currentWord.length) {
+      // 2. Full word complete: pause with full word and dot visible (1350ms)
       timer = setTimeout(() => {
         setIsDeleting(true);
-      }, 3500);
+      }, 1350);
     } else if (isDeleting && charIndex > 0) {
+      // 3. Erasing: erase one character at a time (45ms per character)
       timer = setTimeout(() => {
         setCharIndex((prev) => prev - 1);
-      }, 26);
+      }, 45);
     } else if (isDeleting && charIndex === 0) {
+      // 4. Erased: short pause before next word (220ms), then advance to next word
       timer = setTimeout(() => {
         setIsDeleting(false);
-      }, 600);
+        setWordIndex((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
+      }, 220);
     }
-    return () => clearTimeout(timer);
-  }, [charIndex, isDeleting]);
 
-  const line1 = FULL_TEXT.line1.slice(0, Math.min(charIndex, 15));
-  const line2 = charIndex > 15 ? FULL_TEXT.line2.slice(0, Math.min(charIndex - 15, 15)) : "";
-  const line3Grad = charIndex > 30 ? FULL_TEXT.line3.slice(0, Math.min(charIndex - 30, 9)) : "";
-  const line3Dot = charIndex >= 40 ? "." : "";
-  const activeLine = charIndex <= 15 ? 1 : charIndex <= 30 ? 2 : 3;
+    return () => clearTimeout(timer);
+  }, [charIndex, isDeleting, wordIndex, prefersReducedMotion]);
+
+  const currentWord = TYPEWRITER_WORDS[wordIndex];
+  const displayText = prefersReducedMotion ? currentWord : currentWord.slice(0, charIndex);
+  const isComplete = prefersReducedMotion ? true : (!isDeleting && charIndex === currentWord.length);
 
   // Lock background scroll when video modal is open
   useEffect(() => {
@@ -120,6 +137,7 @@ export default function Hero({ introFinished }) {
     <section id="home" className="hero-section">
       {/* ── Ambient Background Glows ── */}
       <div className="hero-glow hero-glow-heart" aria-hidden="true" />
+      <div className="hero-glow hero-glow-student" aria-hidden="true" />
       <div className="hero-glow hero-glow-sun" aria-hidden="true" />
       <div className="hero-glow hero-glow-earth" aria-hidden="true" />
       <div className="hero-glow hero-glow-molecule" aria-hidden="true" />
@@ -219,9 +237,14 @@ export default function Hero({ introFinished }) {
           <AtomGLB fallbackSrc="/images/hero_3d/atom_3d_enhanced.png" />
         </div>
 
-        {/* 6. Trigonometry Mathematical Model (Right Center) */}
-        <div className="hero-obj hero-obj-card">
-          <TrigonometryGLB fallbackSrc="/images/hero_3d/card_3d_enhanced.png" />
+        {/* 6. Student with VR & Books (Right Center) */}
+        <div className="hero-obj hero-obj-card hero-obj-student">
+          <img
+            src="/images/hero_3d/student_3d_enhanced.png"
+            alt="Student learning with VR and interactive technology"
+            loading="eager"
+            className="hero-3d-img"
+          />
         </div>
 
         {/* 7. Trigonometry Cosine Function Wave (Right Lower) */}
@@ -243,23 +266,31 @@ export default function Hero({ introFinished }) {
             AI + AR/VR + STEM
           </div>
 
-          {/* Headline matching exact 3 lines with typewriter typography animation */}
+          {/* Headline: Static prefix with character-by-character typewriter on final word */}
           <h1
             className="hero-headline"
-            aria-label="Learning Beyond the Limits of a Classroom."
+            aria-label={`Where Curiosity Meets the Future of ${currentWord}.`}
           >
-            <span className="hero-headline-line">
-              {line1}
-              {activeLine === 1 && <span className="hero-typewriter-cursor">|</span>}
+            <span className="hero-headline-line" aria-hidden="true">
+              {STATIC_LINE_1}
             </span>
-            <span className="hero-headline-line">
-              {line2}
-              {activeLine === 2 && <span className="hero-typewriter-cursor">|</span>}
+            <span className="hero-headline-line" aria-hidden="true">
+              {STATIC_LINE_2}
             </span>
-            <span className="hero-headline-line">
-              <span className="hero-headline-gradient">{line3Grad}</span>
-              <span className="hero-headline-dot">{line3Dot}</span>
-              {activeLine === 3 && <span className="hero-typewriter-cursor">|</span>}
+            <span className="hero-headline-line hero-headline-line-animated" aria-hidden="true">
+              <span className="hero-typewriter-box">
+                {/* Sizer reserves the exact width for the current word */}
+                <span className="hero-typewriter-sizer" aria-hidden="true">
+                  {currentWord}.
+                </span>
+                <span className="hero-typewriter-visible">
+                  <span className="hero-headline-dynamic">
+                    {displayText}
+                    {isComplete && <span className="hero-headline-dot">.</span>}
+                  </span>
+                  <span className="hero-typewriter-cursor" aria-hidden="true" />
+                </span>
+              </span>
             </span>
           </h1>
 

@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d_enhanced.png' }) {
   const mountRef = useRef(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Respect reduced motion
@@ -39,16 +40,16 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
 
     const scene = new THREE.Scene();
 
-    // Camera with zoomed-in perspective so planets and orbits are clearly noticed
+    // Perspective camera with dynamic framing
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 8.2, 11.2);
+    const camDir = new THREE.Vector3(0, 7.5, 12.0).normalize();
+    camera.position.copy(camDir.clone().multiplyScalar(36.0));
     camera.lookAt(0, 0, 0);
 
-    // Root group for overall tilt and placement
+    // Root group for subtle planar tilt toward camera for depth
     const rootGroup = new THREE.Group();
-    // Tilt the solar system plane toward the camera for depth and perspective
-    rootGroup.rotation.x = 0.38;
-    rootGroup.rotation.z = -0.14;
+    rootGroup.rotation.x = 0.32;
+    rootGroup.rotation.z = -0.10;
     scene.add(rootGroup);
 
     // Ambient and brand-aligned accent lighting
@@ -79,7 +80,7 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
       (gltf) => {
         modelGroup = gltf.scene;
 
-        // Collect each planet orbit pivot for smooth, continuous, unending rotation (never stops)
+        // Collect each planet orbit pivot for smooth, continuous revolution
         orbitPivots = [
           { node: modelGroup.getObjectByName('mercury_BezierCircle_4'), speed: 0.92 },
           { node: modelGroup.getObjectByName('venus_BezierCircle_7'), speed: 0.68 },
@@ -101,6 +102,30 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
         }
 
         sunNode = modelGroup.getObjectByName('sun_53');
+        if (sunNode) {
+          // Slightly boost radiant Sun scale for prominence
+          sunNode.scale.multiplyScalar(1.25);
+        }
+
+        // Harmonize orbital radii and matching static orbit rings
+        // so all 9 planets remain comfortably framed within the visible area
+        const orbitScaleAdjustments = [
+          { orbit: 'mercury_BezierCircle_4', line: 'mercury_BezierCircle.001_34', scale: 9.8 },
+          { orbit: 'venus_BezierCircle_7', line: 'venus_BezierCircle.001_35', scale: 13.2 },
+          { orbit: 'erath_BezierCircle_11', line: 'erath_BezierCircle.001_36', scale: 17.2 },
+          { orbit: 'mars_BezierCircle_14', line: 'mars_BezierCircle.001_37', scale: 21.6 },
+          { orbit: 'jupiter_BezierCircle_17', line: 'jupiter_BezierCircle.001_38', scale: 27.2 },
+          { orbit: 'saturn_BezierCircle_21', line: 'saturn_BezierCircle.001_39', scale: 32.8 },
+          { orbit: 'uranus_BezierCircle_24', line: 'uranus_BezierCircle.001_40', scale: 38.0 },
+          { orbit: 'neptune_BezierCircle_27', line: 'neptune_BezierCircle.001_41', scale: 43.0 },
+          { orbit: 'pluto_BezierCircle_30', line: 'pluto_BezierCircle.001_42', scale: 47.5 },
+        ];
+        orbitScaleAdjustments.forEach(({ orbit, line, scale }) => {
+          const oNode = modelGroup.getObjectByName(orbit);
+          const lNode = modelGroup.getObjectByName(line);
+          if (oNode) oNode.scale.setScalar(scale);
+          if (lNode) lNode.scale.setScalar(scale);
+        });
 
         // Planet meshes for self-spin
         planetMeshes = [
@@ -115,7 +140,7 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
           modelGroup.getObjectByName('pluto_28'),
         ].filter(Boolean);
 
-        // Slightly boost smaller planets so they are clearly noticed when zoomed in
+        // Boost smaller planets so details are visible
         const boosts = [
           { name: 'mercury_2', factor: 1.5 },
           { name: 'venus_5', factor: 1.25 },
@@ -128,23 +153,15 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
           if (m) m.scale.multiplyScalar(factor);
         });
 
-        // Calculate bounding box and scale for zoomed-in framing
-        const box = new THREE.Box3().setFromObject(modelGroup);
-        const size = new THREE.Vector3();
-        box.getSize(size);
-        const maxDim = Math.max(size.x, size.z);
-        // Zoomed in scale (33.0 instead of 25.0)
-        const scale = maxDim > 0 ? 33.0 / maxDim : 1;
-        modelGroup.scale.setScalar(scale);
+        // Scale model group: outermost orbit radius is 47.5
+        // Scale to world units: 47.5 * 0.22 = 10.45 units radius
+        const worldScale = 0.22;
+        modelGroup.scale.setScalar(worldScale);
 
-        // Position Sun naturally so the planetary orbits sweep across the hero space
-        const center = new THREE.Vector3();
-        box.getCenter(center);
-        modelGroup.position.x = (-center.x + 1.2) * scale;
-        modelGroup.position.z = (-center.z + 1.0) * scale;
-        modelGroup.position.y = -center.y * scale;
+        // Center modelGroup symmetrically at origin
+        modelGroup.position.set(0, 0, 0);
 
-        // Enhance materials with subtle emissive rim and radiant Sun
+        // Enhance materials
         modelGroup.traverse((child) => {
           if (child.isMesh && child.material) {
             child.material.roughness = Math.min(child.material.roughness, 0.4);
@@ -162,6 +179,8 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
         });
 
         rootGroup.add(modelGroup);
+        setIsLoaded(true);
+        handleResize();
       },
       undefined,
       (err) => {
@@ -170,7 +189,7 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
       }
     );
 
-    // Resize handling with aspect-ratio adaptive camera framing
+    // Responsive resize handling with aspect-ratio adaptive camera framing
     const handleResize = () => {
       if (!mount) return;
       const w = mount.clientWidth;
@@ -179,15 +198,25 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
       const aspect = w / h;
       camera.aspect = aspect;
 
-      // Ensure planet orbits and Sun remain framed if aspect ratio changes
-      const baseDist = 13.88; // Math.hypot(8.2, 11.2)
-      const dist = aspect < 1 ? baseDist / Math.max(aspect, 0.75) : baseDist;
-      const camDir = new THREE.Vector3(0, 8.2, 11.2).normalize();
-      camera.position.copy(camDir.multiplyScalar(dist));
+      // Ensure planet orbits and Sun remain fully framed throughout 360° revolutions
+      const fovRad = (camera.fov * Math.PI) / 180;
+      const tanHalfFov = Math.tan(fovRad / 2);
+
+      // Max orbital boundary in world units (Pluto ~10.45, plus Saturn's ring/orbit margin = ~11.2)
+      const maxOrbitExtent = 11.2;
+      const margin = 1.12;
+      const targetRadius = maxOrbitExtent * margin;
+
+      const distV = targetRadius / tanHalfFov;
+      const distH = targetRadius / (tanHalfFov * aspect);
+      const requiredDist = Math.max(distV, distH, 35.0);
+
+      camera.position.copy(camDir.clone().multiplyScalar(requiredDist));
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
     };
+
     handleResize();
     const ro = new ResizeObserver(handleResize);
     ro.observe(mount);
@@ -203,7 +232,6 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
       const delta = Math.min(clock.getDelta(), 0.1);
 
       if (orbitPivots && orbitPivots.length > 0) {
-        // Continuous, unending orbital revolution for all planets (never stops after 1 round)
         orbitPivots.forEach((p) => {
           if (p.node) p.node.rotation.y += p.speed * delta;
         });
@@ -283,7 +311,8 @@ export default function SolarSystemGLB({ fallbackSrc = '/images/hero_3d/solar_3d
         height: '100%',
         position: 'relative',
         pointerEvents: 'none',
-        overflow: 'visible',
+        opacity: isLoaded ? 1 : 0,
+        transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     />
   );

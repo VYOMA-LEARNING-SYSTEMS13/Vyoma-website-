@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enhanced.png' }) {
   const mountRef = useRef(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -38,15 +39,15 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
 
     const scene = new THREE.Scene();
 
-    // Perspective camera framing the full vertical length of the double helix closely
+    // Perspective camera framing the full vertical length of the double helix
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 0, 4.6);
+    camera.position.set(0, 0, 5.0);
     camera.lookAt(0, 0, 0);
 
     // Root group with slight aesthetic tilt
     const rootGroup = new THREE.Group();
-    rootGroup.rotation.z = -0.18;
-    rootGroup.rotation.x = 0.10;
+    rootGroup.rotation.z = -0.16;
+    rootGroup.rotation.x = 0.08;
     scene.add(rootGroup);
 
     // Vertical spin group (rotates around vertical Y axis)
@@ -89,8 +90,8 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.y, size.x, size.z);
-        // Normalize height so the complete vertical helix fits inside the camera view with comfortable breathing room
-        const scale = maxDim > 0 ? 2.85 / maxDim : 1;
+        // Scale so the helix extends into the fading zone, giving the seamless emergence & dissolution look
+        const scale = maxDim > 0 ? 3.35 / maxDim : 1;
         orientGroup.scale.setScalar(scale);
 
         // Center on the visual midpoint
@@ -153,6 +154,9 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
             action.play();
           });
         }
+
+        setIsLoaded(true);
+        handleResize();
       },
       undefined,
       (err) => {
@@ -161,7 +165,7 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
       }
     );
 
-    // Responsive resize handling with dynamic camera distance to guarantee full vertical helix visibility
+    // Responsive resize handling with dynamic camera distance
     const handleResize = () => {
       if (!mount) return;
       const w = mount.clientWidth;
@@ -170,19 +174,22 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
       const aspect = w / h;
       camera.aspect = aspect;
 
-      // Ensure the vertical double helix fits inside the camera frustum at any aspect ratio.
-      // On large screens (laptops/desktops >= 1024px), frame the DNA closer for a zoomed-in, high-impact view.
-      const isLargeScreen = window.innerWidth >= 1024;
-      const targetHeight = isLargeScreen ? 2.25 : 2.95;
-      const minDistance = isLargeScreen ? 3.6 : 4.6;
-
       const fovRad = (camera.fov * Math.PI) / 180;
-      const distForHeight = (targetHeight / 2) / Math.tan(fovRad / 2);
-      const distForWidth = (1.45 / 2) / (Math.tan(fovRad / 2) * aspect);
-      camera.position.z = Math.max(distForHeight, distForWidth, minDistance);
+      const tanHalfFov = Math.tan(fovRad / 2);
+
+      const targetHeight = 2.90 * 1.15; // ~3.33
+      const targetWidth = 1.30 * 1.15;  // ~1.50
+
+      const distV = (targetHeight / 2) / tanHalfFov;
+      const distH = (targetWidth / 2) / (tanHalfFov * aspect);
+      const dist = Math.max(distV, distH, 5.0);
+
+      camera.position.set(0, 0, dist);
+      camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
     };
+
     handleResize();
     const ro = new ResizeObserver(handleResize);
     ro.observe(mount);
@@ -196,18 +203,21 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const delta = Math.min(clock.getDelta(), 0.1);
+      const elapsed = clock.getElapsedTime();
 
       if (mixer) mixer.update(delta);
 
-      // Smooth, gentle continuous rotation strictly around its vertical longitudinal axis
-      spinGroup.rotation.y += 0.08 * delta;
+      // Smooth rotation around vertical longitudinal axis
+      spinGroup.rotation.y += 0.10 * delta;
+      // Gentle floating oscillation
+      rootGroup.position.y = Math.sin(elapsed * 0.8) * 0.04;
 
       renderer.render(scene, camera);
     };
 
     const startLoop = () => {
       if (isVisible && isPageVisible && !animId) {
-        clock.getDelta();
+        clock.getDelta(); // reset delta
         animId = requestAnimationFrame(animate);
       }
     };
@@ -269,7 +279,12 @@ export default function DnaHelixGLB({ fallbackSrc = '/images/hero_3d/dna_3d_enha
         height: '100%',
         position: 'relative',
         pointerEvents: 'none',
-        overflow: 'visible',
+        opacity: isLoaded ? 1 : 0,
+        transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+        WebkitMaskImage:
+          'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 6%, rgba(0,0,0,0.85) 18%, #000 28%, #000 72%, rgba(0,0,0,0.85) 82%, rgba(0,0,0,0.2) 94%, transparent 100%)',
+        maskImage:
+          'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 6%, rgba(0,0,0,0.85) 18%, #000 28%, #000 72%, rgba(0,0,0,0.85) 82%, rgba(0,0,0,0.2) 94%, transparent 100%)',
       }}
     />
   );

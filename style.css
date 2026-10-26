@@ -26,7 +26,7 @@
   --border: #e2e8f0;
 
   /* Typography */
-  --font-title: 'Outfit', 'Inter', sans-serif;
+  --font-title: 'Nunito', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
 
   /* Shadow Systems */
@@ -113,7 +113,7 @@ img {
   text-align: left;
 }
 
-.font-outfit {
+.font-nunito {
   font-family: var(--font-title);
 }
 
@@ -1704,20 +1704,73 @@ section {
   background: var(--light);
 }
 
+/* Learning Journey Capsule Header */
+.learning-journey-capsule {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.capsule-line {
+  display: inline-block;
+  width: 44px;
+  height: 2px;
+  border-radius: 999px;
+}
+
+.capsule-line.left-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(79, 70, 229, 0.9) 100%);
+}
+
+.capsule-line.right-line {
+  background: linear-gradient(90deg, rgba(79, 70, 229, 0.9) 0%, transparent 100%);
+}
+
+.capsule-text {
+  font-family: var(--font-title);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #4f46e5;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.experience-subtitle {
+  font-size: 1.0625rem;
+  color: #64748b;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .learning-journey-capsule {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .capsule-line {
+    width: 24px;
+  }
+
+  .capsule-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+
+  .experience-subtitle {
+    font-size: 0.95rem;
+    padding: 0 12px;
+  }
+}
+
 .step-flow-wrapper {
   position: relative;
   margin-top: 40px;
   margin-bottom: 80px;
-}
-
-.step-line-bg {
-  position: absolute;
-  top: 30px;
-  left: 10%;
-  right: 10%;
-  height: 4px;
-  background: rgba(80, 70, 229, 0.1);
-  z-index: 1;
 }
 
 .steps-container {
@@ -1897,7 +1950,7 @@ section {
 }
 
 .btn-dark-mission {
-  background: #0f172a;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: var(--white);
   border-radius: 9999px;
   padding: 12px 24px;
@@ -1910,7 +1963,7 @@ section {
 }
 
 .btn-dark-mission:hover {
-  background: #1e293b;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
   color: var(--white);
@@ -2397,7 +2450,35 @@ section {
 }
 
 .footer-logo-block {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  background: transparent;
+}
+
+.footer .logo-img,
+.footer-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 175px;
+  object-fit: contain;
+  background: transparent;
+  filter: brightness(0) invert(1);
+  opacity: 0.88;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+}
+
+.footer-logo-link:hover .footer-logo-img,
+.footer-logo-img:hover {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 .footer-logo-text {
@@ -2423,7 +2504,7 @@ section {
   font-size: 1.08rem;
   font-weight: 700;
   color: #ffffff;
-  margin-top: 24px;
+  margin-top: 16px;
   margin-bottom: 12px;
 }
 
@@ -2547,6 +2628,30 @@ section {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.footer .contact-detail-card.location-card-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer .contact-detail-card.location-card-link:hover {
+  background: rgba(59, 130, 246, 0.06) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.footer .contact-detail-card.location-card-link:hover .contact-detail-icon {
+  color: #60a5fa !important;
+  transform: scale(1.1);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.footer .contact-detail-card.location-card-link:hover .contact-detail-info p {
+  color: #cbd5e1 !important;
 }
 
 .footer .contact-detail-icon {
@@ -2771,6 +2876,11 @@ section {
     width: auto;
   }
 
+  .footer .logo-img,
+  .footer-logo-img {
+    height: 38px;
+  }
+
   .menu-toggle {
     display: block;
     margin-top: 8px;
@@ -2969,7 +3079,7 @@ section {
 }
 
 .brand-highlight {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

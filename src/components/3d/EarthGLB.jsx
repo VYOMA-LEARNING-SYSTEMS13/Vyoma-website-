@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhanced.png' }) {
   const mountRef = useRef(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -38,9 +39,9 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
 
     const scene = new THREE.Scene();
 
-    // 3/4 angled camera view showing depth and perspective
+    // Perspective camera centered on origin
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(0, 0.4, 4.8);
+    camera.position.set(0, 0, 5.5);
     camera.lookAt(0, 0, 0);
 
     // Tilt group for realistic 23.4° Earth axial tilt
@@ -71,7 +72,7 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
     scene.add(purpleGlow);
 
     // Glowing atmospheric haze shell around Earth
-    const atmoGeo = new THREE.SphereGeometry(1.56, 32, 32);
+    const atmoGeo = new THREE.SphereGeometry(1.50, 32, 32);
     const atmoMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
       transparent: true,
@@ -94,8 +95,8 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z);
-        // Normalize scale to 2.75 so the globe and surrounding glowing atmosphere shell fit comfortably without edge clipping
-        const scale = maxDim > 0 ? 2.75 / maxDim : 1;
+        // Normalize globe scale to 2.65 so the globe and surrounding glowing atmosphere shell fit comfortably without edge clipping
+        const scale = maxDim > 0 ? 2.65 / maxDim : 1;
         modelMesh.scale.setScalar(scale);
 
         const center = new THREE.Vector3();
@@ -112,6 +113,8 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
         });
 
         earthGroup.add(modelMesh);
+        setIsLoaded(true);
+        handleResize();
       },
       undefined,
       (err) => {
@@ -120,7 +123,7 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
       }
     );
 
-    // Responsive resize handling with dynamic camera distance
+    // Responsive resize handling with dynamic camera distance guaranteeing full globe visibility
     const handleResize = () => {
       if (!mount) return;
       const w = mount.clientWidth;
@@ -129,13 +132,25 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
       const aspect = w / h;
       camera.aspect = aspect;
 
-      const baseDist = 5.0;
-      const dist = aspect < 1 ? baseDist / Math.max(aspect, 0.75) : baseDist;
-      camera.position.set(0, 0.4, dist);
+      const fovRad = (camera.fov * Math.PI) / 180;
+      const tanHalfFov = Math.tan(fovRad / 2);
+
+      // Atmosphere radius is 1.50 with pulse up to 1.55.
+      // Add comfortable 18% breathing padding so all edges (top, bottom, left, right) have ample space.
+      const boundingRadius = 1.55;
+      const padding = 1.18;
+      const targetRadius = boundingRadius * padding;
+
+      const distV = targetRadius / tanHalfFov;
+      const distH = targetRadius / (tanHalfFov * aspect);
+      const dist = Math.max(distV, distH, 5.4);
+
+      camera.position.set(0, 0, dist);
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
     };
+
     handleResize();
     const ro = new ResizeObserver(handleResize);
     ro.observe(mount);
@@ -163,7 +178,7 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
 
     const startLoop = () => {
       if (isVisible && isPageVisible && !animId) {
-        clock.getDelta();
+        clock.getDelta(); // reset delta
         animId = requestAnimationFrame(animate);
       }
     };
@@ -227,7 +242,8 @@ export default function EarthGLB({ fallbackSrc = '/images/hero_3d/earth_3d_enhan
         height: '100%',
         position: 'relative',
         pointerEvents: 'none',
-        overflow: 'visible',
+        opacity: isLoaded ? 1 : 0,
+        transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     />
   );
