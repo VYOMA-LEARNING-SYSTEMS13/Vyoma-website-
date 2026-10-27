@@ -1,0 +1,260 @@
+import React, { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+export default function CosineFunctionGLB({ fallbackSrc = '/images/hero_3d/card_3d_enhanced.png' }) {
+  const mountRef = useRef(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      setLoadFailed(true);
+      return;
+    }
+
+    const mount = mountRef.current;
+    if (!mount) return;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance',
+      });
+    } catch (e) {
+      console.warn('WebGL not supported for CosineFunctionGLB:', e);
+      setLoadFailed(true);
+      return;
+    }
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.30;
+    mount.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+
+    // Perspective camera framed so the entire cosine wave, unit circle, and labels fit comfortably without any edge cutting
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+    const baseCamPos = new THREE.Vector3(0.06, 0.18, 3.8);
+    camera.position.copy(baseCamPos);
+    camera.lookAt(0, 0, 0);
+
+    const rootGroup = new THREE.Group();
+    // Balanced 3D perspective angle
+    rootGroup.rotation.y = -0.14;
+    rootGroup.rotation.x = 0.08;
+    scene.add(rootGroup);
+
+    // Luminous lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+    keyLight.position.set(4, 6, 6);
+    scene.add(keyLight);
+
+    const cyanRim = new THREE.DirectionalLight(0x06b6d4, 3.2);
+    cyanRim.position.set(-5, -2, 4);
+    scene.add(cyanRim);
+
+    const purpleFill = new THREE.DirectionalLight(0xa855f7, 2.6);
+    purpleFill.position.set(3, -4, -2);
+    scene.add(purpleFill);
+
+    let mixer = null;
+    let modelMesh = null;
+    const loader = new GLTFLoader();
+
+    loader.load(
+      '/3d_models/visualizing_trigonometry_cosine_function.glb',
+      (gltf) => {
+        modelMesh = gltf.scene;
+
+        // Compute bounds and center the model
+        const box = new THREE.Box3().setFromObject(modelMesh);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        // Zoomed-out scale (1.60) so the wide cosine wave and unit circle are evenly framed with generous padding on all sides
+        const scale = maxDim > 0 ? 1.60 / maxDim : 1;
+        modelMesh.scale.setScalar(scale);
+
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        modelMesh.position.sub(center.clone().multiplyScalar(scale));
+
+        // High-contrast, vibrant STEM palette for clear visibility on light backgrounds
+        modelMesh.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const nodeName = (child.name || '').toLowerCase();
+            const matName = (child.material.name || '').toLowerCase();
+
+            child.material.roughness = 0.2;
+            child.material.metalness = 0.25;
+
+            if (nodeName.includes('pdiscshape') || matName.includes('yellow')) {
+              // Wave curve points: vibrant luminous cyan with strong contrast
+              child.material.color = new THREE.Color(0x0284c7);
+              child.material.emissive = new THREE.Color(0x06b6d4);
+              child.material.emissiveIntensity = 0.95;
+            } else if (nodeName.includes('ptorus') || matName.includes('material')) {
+              // Unit circle torus / sine-cosine indicator: vibrant royal purple
+              child.material.color = new THREE.Color(0x7c3aed);
+              child.material.emissive = new THREE.Color(0x6366f1);
+              child.material.emissiveIntensity = 0.90;
+            } else if (nodeName.includes('typemesh')) {
+              // Math labels / function text: high contrast deep indigo
+              child.material.color = new THREE.Color(0x1e1b4b);
+              child.material.emissive = new THREE.Color(0x312e81);
+              child.material.emissiveIntensity = 0.65;
+            } else {
+              // Axes, grid guides, and frames: clean high-contrast indigo-blue
+              child.material.color = new THREE.Color(0x312e81);
+              child.material.emissive = new THREE.Color(0x4338ca);
+              child.material.emissiveIntensity = 0.65;
+            }
+            child.material.needsUpdate = true;
+          }
+        });
+
+        rootGroup.add(modelMesh);
+
+        // Play the cosine wave propagation animation
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(modelMesh);
+          gltf.animations.forEach((clip) => {
+            const action = mixer.clipAction(clip);
+            action.timeScale = 0.85;
+            action.play();
+          });
+        }
+
+        setIsLoaded(true);
+        handleResize();
+      },
+      undefined,
+      (err) => {
+        console.warn('Failed to load visualizing_trigonometry_cosine_function.glb:', err);
+        setLoadFailed(true);
+      }
+    );
+
+    // Responsive camera framing adapting dynamically to viewport aspect ratio
+    const handleResize = () => {
+      if (!mount) return;
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      if (w === 0 || h === 0) return;
+      const aspect = w / h;
+      camera.aspect = aspect;
+
+      // The model width is ~1.60 world units, height is ~0.80.
+      // Ensure both width and height fit with generous 38% breathing padding on all 4 sides.
+      const fovRad = (camera.fov * Math.PI) / 180;
+      const tanHalfFov = Math.tan(fovRad / 2);
+
+      const targetWidth = 1.60 * 1.38; // ~2.20
+      const targetHeight = 0.80 * 1.45; // ~1.16
+
+      const distH = (targetWidth / 2) / (tanHalfFov * aspect);
+      const distV = (targetHeight / 2) / tanHalfFov;
+      const dist = Math.max(distH, distV, 3.8);
+
+      camera.position.copy(baseCamPos.clone().normalize().multiplyScalar(dist));
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(w, h, false);
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(mount);
+    handleResize();
+
+    let animationFrameId;
+    let clock = new THREE.Clock();
+
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
+
+      if (mixer) {
+        mixer.update(delta);
+      }
+
+      // Gentle, controlled subtle floating motion that stays well within safe canvas bounds
+      if (rootGroup) {
+        rootGroup.rotation.y = -0.14 + Math.sin(elapsed * 0.5) * 0.02;
+        rootGroup.rotation.x = 0.08 + Math.cos(elapsed * 0.4) * 0.015;
+        rootGroup.position.y = Math.sin(elapsed * 0.7) * 0.015;
+      }
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
+      if (mixer) mixer.stopAllAction();
+
+      scene.traverse((obj) => {
+        if (obj.isMesh) {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) {
+            if (Array.isArray(obj.material)) {
+              obj.material.forEach((m) => m.dispose());
+            } else {
+              obj.material.dispose();
+            }
+          }
+        }
+      });
+
+      if (renderer) {
+        renderer.dispose();
+        if (mount.contains(renderer.domElement)) {
+          mount.removeChild(renderer.domElement);
+        }
+      }
+    };
+  }, []);
+
+  if (loadFailed) {
+    return (
+      <div className="hero-3d-canvas-wrap">
+        <img
+          src={fallbackSrc}
+          alt="Cosine Function Math Model"
+          className="hero-3d-img"
+          loading="eager"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={mountRef}
+      className="hero-3d-canvas-wrap"
+      aria-label="Interactive 3D Cosine Function Wave Visualization"
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        pointerEvents: 'none',
+        opacity: isLoaded ? 1 : 0,
+        transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+    />
+  );
+}

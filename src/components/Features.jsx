@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Sparkles,
+    Brain,
     Bot,
     Box,
     LayoutDashboard,
@@ -13,7 +13,7 @@ import {
 export default function Features() {
     const cards = [
         {
-            icon: <Sparkles />,
+            icon: <Brain />,
             ring: 'ring-blue',
             title: 'Increase Engagement',
             text: 'Immersive gamified pathways and media that keep students actively curious and learning.',

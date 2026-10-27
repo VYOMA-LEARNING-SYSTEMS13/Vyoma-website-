@@ -1,14 +1,37 @@
 import React from 'react';
 
+const logoImg = "/vyoma final logo.png";
+
 export default function Footer({ navigateTo }) {
+    const handleLogoClick = (e) => {
+        if (navigateTo) {
+            e.preventDefault();
+            navigateTo('/');
+            setTimeout(() => {
+                const el = document.getElementById('home');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+    };
+
     return (
         <footer className="footer">
             <div className="container footer-main-wrapper">
                 {/* Column 1: Brand details */}
                 <div className="footer-brand">
                     <div className="footer-logo-block">
-                        <span className="footer-logo-text">VYOMA</span>
-                        <span className="footer-logo-sub">Learning Systems Pvt. Ltd.</span>
+                        <a
+                            href="#home"
+                            className="footer-logo-link"
+                            aria-label="Vyoma Home"
+                            onClick={handleLogoClick}
+                        >
+                            <img
+                                src={logoImg}
+                                alt="Vyoma Logo"
+                                className="logo-img footer-logo-img"
+                            />
+                        </a>
                     </div>
                     <h4 className="footer-brand-firm-name">Vyoma Learning Systems Pvt. Ltd.</h4>
                     <p className="footer-desc">
@@ -130,8 +153,15 @@ export default function Footer({ navigateTo }) {
                         </div>
 
                         <div className="contact-details-grid">
-                            {/* Full Width Card: Address */}
-                            <div className="contact-detail-card full-width">
+                            {/* Full Width Card: Address (Clickable Google Maps link) */}
+                            <a
+                                href="https://www.google.com/maps/search/?api=1&query=i-Hub,+KCG+Campus,+University+Area,+Ahmedabad+-+380015,+Gujarat,+India"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="contact-detail-card full-width location-card-link"
+                                aria-label="Open location in Google Maps"
+                                title="Open in Google Maps"
+                            >
                                 <div className="contact-detail-icon">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +185,7 @@ export default function Footer({ navigateTo }) {
                                     <p>i-Hub, KCG Campus, University Area</p>
                                     <p>Ahmedabad – 380015, Gujarat, India</p>
                                 </div>
-                            </div>
+                            </a>
 
                             {/* Two Columns for Phone and Email */}
                             <div className="contact-details-row">
