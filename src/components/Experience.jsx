@@ -4,7 +4,6 @@ import {
     Eye,
     ClipboardCheck,
     TrendingUp,
-    ArrowRight,
 } from 'lucide-react';
 
 function BookPlayIcon({ size = 24, className = '', ...props }) {
@@ -44,34 +43,39 @@ function BookPlayIcon({ size = 24, className = '', ...props }) {
 export default function Experience() {
     const steps = [
         {
-            numIcon: <BookPlayIcon />,
+            num: '01',
+            numIcon: <BookPlayIcon size={20} />,
             title: 'Learn',
             text: 'Engaging concept videos & resources',
         },
         {
-            numIcon: <CheckSquare />,
+            num: '02',
+            numIcon: <CheckSquare size={20} />,
             title: 'Practice',
             text: 'Interactive quizzes & assignments',
         },
         {
-            numIcon: <Eye />,
+            num: '03',
+            numIcon: <Eye size={20} />,
             title: 'Visualize',
             text: '3D, AR & immersive learning',
         },
         {
-            numIcon: <ClipboardCheck />,
+            num: '04',
+            numIcon: <ClipboardCheck size={20} />,
             title: 'Assess',
             text: 'Tests, evaluations & feedback',
         },
         {
-            numIcon: <TrendingUp />,
+            num: '05',
+            numIcon: <TrendingUp size={20} />,
             title: 'Improve',
             text: 'AI insights to boost performance',
         },
     ];
 
     return (
-        <section className="experience-section">
+        <section className="experience-section" id="learning-journey">
             <div className="container text-center section-header">
                 <div className="learning-journey-capsule">
                     <span className="capsule-line left-line" aria-hidden="true"></span>
@@ -84,23 +88,43 @@ export default function Experience() {
                 </p>
             </div>
 
-            {/* Step Flow */}
-            <div className="container step-flow-wrapper">
-                <div className="steps-container">
-                    {steps.map((step, idx) => (
-                        <React.Fragment key={idx}>
-                            <div className="step-card">
-                                <div className="step-num">{step.numIcon}</div>
-                                <h4>{step.title}</h4>
-                                <p>{step.text}</p>
-                            </div>
-                            {idx < steps.length - 1 && (
-                                <div className="step-arrow">
-                                    <ArrowRight />
+            {/* Vertical Zigzag Timeline */}
+            <div className="container journey-timeline-wrapper">
+                {/* Continuous central vertical line passing through all 5 junctions */}
+                <div className="journey-central-line" aria-hidden="true"></div>
+
+                <div className="journey-timeline-list" role="list">
+                    {steps.map((step, idx) => {
+                        const isLeft = idx % 2 === 0;
+                        return (
+                            <div
+                                key={step.num}
+                                className={`journey-row ${isLeft ? 'journey-row--left' : 'journey-row--right'}`}
+                                role="listitem"
+                            >
+                                <div className="journey-cell">
+                                    <div className="journey-content">
+                                        <div className="journey-header">
+                                            <span className="journey-icon" aria-hidden="true">{step.numIcon}</span>
+                                            <h3 className="journey-title">{step.title}</h3>
+                                        </div>
+                                        <p className="journey-desc">{step.text}</p>
+                                    </div>
+
+                                    <div
+                                        className="journey-circle"
+                                        aria-label={`Step ${step.num}: ${step.title}`}
+                                    >
+                                        <span className="journey-num">{step.num}</span>
+                                    </div>
+
+                                    <div className="journey-connector" aria-hidden="true">
+                                        <span className="journey-dot"></span>
+                                    </div>
                                 </div>
-                            )}
-                        </React.Fragment>
-                    ))}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>
