@@ -114,6 +114,7 @@ export default function Footer({ navigateTo }) {
                                 href="https://careers.curioteach.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className="footer-careers-link"
                             >
                                 Careers
                             </a>

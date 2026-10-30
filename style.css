@@ -3153,6 +3153,16 @@ section {
   color: #ffffff;
 }
 
+/* Careers link highlighted in orange */
+.footer-careers-link {
+  color: #f97316 !important;
+  font-weight: 600;
+}
+
+.footer-careers-link:hover {
+  color: #fb923c !important;
+}
+
 /* ==========================================================================
    FOOTER CONTACT DETAIL OVERRIDES (mockup specification)
    ========================================================================== */
