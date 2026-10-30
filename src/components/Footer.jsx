@@ -109,6 +109,15 @@ export default function Footer({ navigateTo }) {
                         <li>
                             <a href="#products">Products</a>
                         </li>
+                        <li>
+                            <a
+                                href="https://careers.curioteach.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Careers
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

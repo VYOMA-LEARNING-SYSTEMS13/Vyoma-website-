@@ -3,15 +3,25 @@ const nodemailer = require('nodemailer');
 // Reuse nodemailer transporter across calls if possible (caching)
 let transporter;
 
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function getTransporter() {
     if (!transporter) {
+        const smtpHost = process.env.ZOHO_SMTP_HOST || process.env.SMTP_HOST || 'smtp.zoho.in';
+        const smtpPort = Number(process.env.ZOHO_SMTP_PORT || process.env.SMTP_PORT || 465);
+        const smtpUser = process.env.ZOHO_SMTP_USER || process.env.SMTP_USER || '';
+        const smtpPass = process.env.ZOHO_SMTP_PASS || process.env.SMTP_PASSWORD || '';
+        const isSecure = smtpPort === 465;
+
         transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: Number(process.env.SMTP_PORT),
-            secure: false, // true for 465, false for other ports (587 STARTTLS)
+            host: smtpHost,
+            port: smtpPort,
+            secure: isSecure, // true for 465 (SSL/TLS), false for other ports (587 STARTTLS)
             auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD
+                user: smtpUser,
+                pass: smtpPass
             }
         });
     }
@@ -50,10 +60,15 @@ module.exports = async (req, res) => {
         });
     }
 
+    const smtpUser = process.env.ZOHO_SMTP_USER || process.env.SMTP_USER || '';
+    const smtpPass = process.env.ZOHO_SMTP_PASS || process.env.SMTP_PASSWORD || '';
+    const smtpFrom = process.env.SMTP_FROM || smtpUser;
+    const contactReceiver = process.env.CONTACT_RECEIVER;
+
     try {
         const mailOptions = {
-            from: process.env.SMTP_FROM,
-            to: process.env.CONTACT_RECEIVER,
+            from: smtpFrom,
+            to: contactReceiver,
             replyTo: emailAddress.trim(),
             subject: 'New Vyoma Website Enquiry',
             text: `Full Name:\n${fullName.trim()}\n\nEmail Address:\n${emailAddress.trim()}\n\nMessage:\n${messageText.trim()}`
@@ -61,7 +76,7 @@ module.exports = async (req, res) => {
 
         const activeTransporter = getTransporter();
         await activeTransporter.sendMail(mailOptions);
-        console.log(`Contact message sent successfully. Recipient: ${process.env.CONTACT_RECEIVER}`);
+        console.log(`Contact message sent successfully. Recipient: ${contactReceiver}`);
 
         return res.status(200).json({
             success: true,
@@ -70,11 +85,11 @@ module.exports = async (req, res) => {
     } catch (error) {
         // Redact any potential SMTP credentials or keys from the message text
         let safeMsg = error.message || '';
-        if (process.env.SMTP_PASSWORD) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+        if (smtpPass) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpPass), 'g'), '[REDACTED_PASSWORD]');
         }
-        if (process.env.SMTP_USER) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
+        if (smtpUser) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpUser), 'g'), '[REDACTED_USER]');
         }
         console.error('Failed to send contact message email:', safeMsg);
 

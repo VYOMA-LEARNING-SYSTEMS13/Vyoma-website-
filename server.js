@@ -6,51 +6,61 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Startup check for required environment variables
-const requiredEnvVars = [
-    'SMTP_HOST',
-    'SMTP_PORT',
-    'SMTP_USER',
-    'SMTP_PASSWORD',
-    'SMTP_FROM',
-    'CONTACT_RECEIVER'
-];
+// Resolve Zoho SMTP configuration with backward-compatible fallbacks
+const smtpHost = process.env.ZOHO_SMTP_HOST || process.env.SMTP_HOST || 'smtp.zoho.in';
+const smtpPort = Number(process.env.ZOHO_SMTP_PORT || process.env.SMTP_PORT || 465);
+const smtpUser = process.env.ZOHO_SMTP_USER || process.env.SMTP_USER || '';
+const smtpPass = process.env.ZOHO_SMTP_PASS || process.env.SMTP_PASSWORD || '';
+const smtpFrom = process.env.SMTP_FROM || smtpUser;
+const contactReceiver = process.env.CONTACT_RECEIVER;
+const isSecure = smtpPort === 465;
 
-console.log('=== SMTP Environment Variable Check ===');
-requiredEnvVars.forEach((varName) => {
-    const isConfigured = process.env[varName] !== undefined && process.env[varName].trim() !== '';
-    console.log(`${varName}: ${isConfigured ? 'configured' : 'missing'}`);
-});
-console.log('=======================================');
+// Startup check for required Zoho SMTP environment variables
+console.log('=== Zoho SMTP Environment Configuration Check ===');
+console.log(`SMTP Host: ${smtpHost}`);
+console.log(`SMTP Port: ${smtpPort} (SSL/TLS: ${isSecure ? 'Enabled' : 'Disabled, using STARTTLS'})`);
+console.log(`SMTP User: ${smtpUser && !smtpUser.includes('your-email@yourdomain.com') ? 'configured' : (smtpUser ? 'placeholder' : 'missing')}`);
+console.log(`SMTP Password: ${smtpPass && !smtpPass.includes('your-zoho-app-password') ? 'configured' : (smtpPass ? 'placeholder' : 'missing')}`);
+console.log(`SMTP From: ${smtpFrom ? 'configured' : 'missing'}`);
+console.log(`Contact Receiver: ${contactReceiver ? 'configured' : 'missing'}`);
+console.log('==================================================');
 
-// Create Nodemailer Transporter
+// Create Nodemailer Transporter for Zoho SMTP
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: false, // true for 465, false for other ports (587 STARTTLS)
+    host: smtpHost,
+    port: smtpPort,
+    secure: isSecure, // true for 465 (SSL/TLS), false for 587 (STARTTLS)
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD
+        user: smtpUser,
+        pass: smtpPass
     }
 });
 
-// Verify the SMTP connection
-transporter.verify((error, success) => {
-    if (error) {
-        // Redact any potential SMTP credentials or keys from the message text
-        let safeMsg = error.message || '';
-        // If there's an actual password or key, we can scrub a generic pattern or key pattern
-        if (process.env.SMTP_PASSWORD) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+// Verify the SMTP connection if credentials are configured
+const isPlaceholder = !smtpUser || !smtpPass || smtpUser.includes('your-email@yourdomain.com') || smtpPass.includes('your-zoho-app-password');
+if (!isPlaceholder) {
+    transporter.verify((error, success) => {
+        if (error) {
+            // Redact any potential SMTP credentials or keys from the message text
+            let safeMsg = error.message || '';
+            if (smtpPass) {
+                safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpPass), 'g'), '[REDACTED_PASSWORD]');
+            }
+            if (smtpUser) {
+                safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpUser), 'g'), '[REDACTED_USER]');
+            }
+            console.error('Zoho SMTP connection verification failed. Error details:', safeMsg);
+        } else {
+            console.log('Zoho SMTP connection successful');
         }
-        if (process.env.SMTP_USER) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
-        }
-        console.error('SMTP connection verification failed. Error details:', safeMsg);
-    } else {
-        console.log('SMTP connection successful');
-    }
-});
+    });
+} else {
+    console.log('Zoho SMTP credentials set to placeholders. Transporter configured successfully; connection verification deferred until valid credentials are provided.');
+}
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 // Middleware
 app.use(cors());
@@ -91,15 +101,15 @@ app.post('/api/contact', async (req, res) => {
 
     try {
         const mailOptions = {
-            from: process.env.SMTP_FROM,
-            to: process.env.CONTACT_RECEIVER,
+            from: smtpFrom,
+            to: contactReceiver,
             replyTo: emailAddress.trim(),
             subject: 'New Vyoma Website Enquiry',
             text: `Full Name:\n${fullName.trim()}\n\nEmail Address:\n${emailAddress.trim()}\n\nMessage:\n${messageText.trim()}`
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`Contact message sent successfully. Recipient: ${process.env.CONTACT_RECEIVER}`);
+        console.log(`Contact message sent successfully. Recipient: ${contactReceiver}`);
 
         res.status(200).json({
             success: true,
@@ -108,11 +118,11 @@ app.post('/api/contact', async (req, res) => {
     } catch (error) {
         // Redact any potential SMTP credentials or keys from the message text
         let safeMsg = error.message || '';
-        if (process.env.SMTP_PASSWORD) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+        if (smtpPass) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpPass), 'g'), '[REDACTED_PASSWORD]');
         }
-        if (process.env.SMTP_USER) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
+        if (smtpUser) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpUser), 'g'), '[REDACTED_USER]');
         }
         console.error('Failed to send contact message email:', safeMsg);
 
@@ -127,10 +137,10 @@ app.post('/api/contact', async (req, res) => {
 app.get('/api/test-email', async (req, res) => {
     try {
         const mailOptions = {
-            from: process.env.SMTP_FROM,
-            to: process.env.CONTACT_RECEIVER,
-            subject: 'Vyoma SMTP Test',
-            text: 'This is a test email from the Vyoma website backend. SMTP configuration is working successfully.'
+            from: smtpFrom,
+            to: contactReceiver,
+            subject: 'Vyoma Zoho SMTP Test',
+            text: 'This is a test email from the Vyoma website backend. Zoho SMTP configuration is working successfully.'
         };
 
         const info = await transporter.sendMail(mailOptions);
@@ -143,11 +153,11 @@ app.get('/api/test-email', async (req, res) => {
     } catch (error) {
         // Redact potential secrets from the error output
         let safeMsg = error.message || '';
-        if (process.env.SMTP_PASSWORD) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_PASSWORD, 'g'), '[REDACTED_PASSWORD]');
+        if (smtpPass) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpPass), 'g'), '[REDACTED_PASSWORD]');
         }
-        if (process.env.SMTP_USER) {
-            safeMsg = safeMsg.replace(new RegExp(process.env.SMTP_USER, 'g'), '[REDACTED_USER]');
+        if (smtpUser) {
+            safeMsg = safeMsg.replace(new RegExp(escapeRegExp(smtpUser), 'g'), '[REDACTED_USER]');
         }
         console.error('Failed to send test email:', safeMsg);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const logoImg = "/vyoma final logo.png";
@@ -8,6 +8,9 @@ export default function Header({ currentPath, navigateTo }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const dropdownRef = useRef(null);
+    const triggerRef = useRef(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -46,6 +49,68 @@ export default function Header({ currentPath, navigateTo }) {
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, [currentPath]);
+
+    // Handle outside clicks and keyboard navigation (Escape to close)
+    useEffect(() => {
+        if (!dropdownOpen) return;
+
+        const handleOutsideClick = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setDropdownOpen(false);
+                if (triggerRef.current) {
+                    triggerRef.current.focus();
+                }
+            }
+        };
+
+        document.addEventListener('pointerdown', handleOutsideClick);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('pointerdown', handleOutsideClick);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [dropdownOpen]);
+
+    // Close dropdown whenever the mobile menu drawer is closed
+    useEffect(() => {
+        if (!menuOpen) {
+            setDropdownOpen(false);
+        }
+    }, [menuOpen]);
+
+    // Desktop hover handlers
+    const handleMouseEnter = () => {
+        if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            setDropdownOpen(true);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            setDropdownOpen(false);
+        }
+    };
+
+    // Click toggle handler
+    const handleDropdownToggle = (e) => {
+        e.stopPropagation();
+        setDropdownOpen((prev) => !prev);
+    };
+
+    // Keyboard toggle support (Enter or Space)
+    const handleDropdownKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setDropdownOpen((prev) => !prev);
+        }
+    };
 
     const handleLinkClick = () => {
         setMenuOpen(false);
@@ -92,16 +157,33 @@ export default function Header({ currentPath, navigateTo }) {
                 </button>
 
                 <nav className={`nav-menu ${menuOpen ? 'open' : ''}`}>
-                    <div className={`nav-dropdown ${dropdownOpen ? 'open' : ''}`}>
+                    <div
+                        ref={dropdownRef}
+                        className={`nav-dropdown ${dropdownOpen ? 'open' : 'closed'}`}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
                         <button
+                            ref={triggerRef}
+                            type="button"
+                            aria-haspopup="true"
+                            aria-expanded={dropdownOpen}
+                            aria-controls="ecosystem-dropdown-menu"
                             className={`dropdown-trigger ${['vision', 'platform', 'why-schools', 'products'].includes(activeSection) && currentPath !== '/our-story' ? 'active' : ''}`}
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            onClick={handleDropdownToggle}
+                            onKeyDown={handleDropdownKeyDown}
                         >
                             Ecosystem <ChevronDown size={14} />
                         </button>
-                        <div className="dropdown-content">
+                        <div
+                            id="ecosystem-dropdown-menu"
+                            role="menu"
+                            aria-label="Ecosystem"
+                            className="dropdown-content"
+                        >
                             <a
                                 href="#vision"
+                                role="menuitem"
                                 className={`dropdown-item ${activeSection === 'vision' && currentPath !== '/our-story' ? 'active' : ''}`}
                                 onClick={(e) => {
                                     setDropdownOpen(false);
@@ -112,6 +194,7 @@ export default function Header({ currentPath, navigateTo }) {
                             </a>
                             <a
                                 href="#platform"
+                                role="menuitem"
                                 className={`dropdown-item ${activeSection === 'platform' && currentPath !== '/our-story' ? 'active' : ''}`}
                                 onClick={(e) => {
                                     setDropdownOpen(false);
@@ -122,6 +205,7 @@ export default function Header({ currentPath, navigateTo }) {
                             </a>
                             <a
                                 href="#why-schools"
+                                role="menuitem"
                                 className={`dropdown-item ${activeSection === 'why-schools' && currentPath !== '/our-story' ? 'active' : ''}`}
                                 onClick={(e) => {
                                     setDropdownOpen(false);
@@ -132,6 +216,7 @@ export default function Header({ currentPath, navigateTo }) {
                             </a>
                             <a
                                 href="#products"
+                                role="menuitem"
                                 className={`dropdown-item ${activeSection === 'products' && currentPath !== '/our-story' ? 'active' : ''}`}
                                 onClick={(e) => {
                                     setDropdownOpen(false);

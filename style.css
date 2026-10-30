@@ -426,8 +426,26 @@ section {
   transition: transform 0.2s ease;
 }
 
-.nav-dropdown:hover .dropdown-trigger svg {
+@media (hover: hover) and (pointer: fine) {
+  .nav-dropdown:not(.closed):hover .dropdown-trigger svg {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown:not(.closed):hover .dropdown-content {
+    display: block;
+  }
+}
+
+.nav-dropdown.open .dropdown-trigger svg {
   transform: rotate(180deg);
+}
+
+.nav-dropdown.open .dropdown-content {
+  display: block;
+}
+
+.nav-dropdown.closed .dropdown-content {
+  display: none;
 }
 
 .dropdown-content {
@@ -458,9 +476,6 @@ section {
   }
 }
 
-.nav-dropdown:hover .dropdown-content {
-  display: block;
-}
 
 .dropdown-item {
   color: var(--dark-light);
@@ -508,10 +523,13 @@ section {
     animation: none;
   }
 
-  /* On mobile trigger opens content via JavaScript toggle, or we can use sibling hover */
-  .nav-dropdown:hover .dropdown-content,
+  /* Mobile dropdown controlled toggle (hover disabled for mobile/touch) */
   .nav-dropdown.open .dropdown-content {
     display: block;
+  }
+
+  .nav-dropdown.open .dropdown-trigger svg {
+    transform: rotate(180deg);
   }
 
   .dropdown-item {
@@ -1770,7 +1788,7 @@ section {
 /* Vertical Zigzag Timeline Styling */
 .journey-timeline-wrapper {
   position: relative;
-  max-width: 1080px;
+  max-width: 1160px;
   margin: 60px auto 84px auto;
   padding: 0 24px;
 }
@@ -1894,9 +1912,9 @@ section {
   user-select: none;
 }
 
-/* Horizontal Connector Lines & Junction Dots (Significantly Extended Length: 120px) */
+/* Horizontal Connector Lines & Junction Dots (Extended Length: 160px) */
 .journey-connector {
-  width: 120px;
+  width: 160px;
   height: 2px;
   background: var(--primary);
   position: relative;
@@ -1978,13 +1996,13 @@ section {
 /* Medium Desktop & Large Tablet (801px - 1100px) */
 @media (min-width: 801px) and (max-width: 1100px) {
   .journey-timeline-wrapper {
-    max-width: 900px;
+    max-width: 960px;
     margin: 50px auto 70px auto;
     padding: 0 20px;
   }
 
   .journey-connector {
-    width: 85px;
+    width: 110px;
   }
 
   .journey-circle {
@@ -2022,7 +2040,7 @@ section {
 /* Tablet (681px - 800px) */
 @media (min-width: 681px) and (max-width: 800px) {
   .journey-timeline-wrapper {
-    max-width: 700px;
+    max-width: 740px;
     margin: 44px auto 60px auto;
     padding: 0 16px;
   }
@@ -2032,7 +2050,7 @@ section {
   }
 
   .journey-connector {
-    width: 65px;
+    width: 85px;
   }
 
   .journey-circle {
@@ -2103,7 +2121,7 @@ section {
   .journey-row--left .journey-connector {
     grid-column: 2 !important;
     grid-row: 1 !important;
-    width: 65px !important;
+    width: 85px !important;
   }
 
   .journey-row--left .journey-content {
@@ -2125,7 +2143,7 @@ section {
   .journey-row--right .journey-connector {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    width: 65px !important;
+    width: 85px !important;
   }
 
   .journey-row--right .journey-circle {
@@ -2225,7 +2243,7 @@ section {
   .journey-row--left .journey-connector {
     grid-column: 2 !important;
     grid-row: 1 !important;
-    width: 55px !important;
+    width: 70px !important;
   }
 
   .journey-row--left .journey-content {
@@ -2247,7 +2265,7 @@ section {
   .journey-row--right .journey-connector {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    width: 55px !important;
+    width: 70px !important;
   }
 
   .journey-row--right .journey-circle {
@@ -2347,7 +2365,7 @@ section {
   .journey-row--left .journey-connector {
     grid-column: 2 !important;
     grid-row: 1 !important;
-    width: 46px !important;
+    width: 58px !important;
   }
 
   .journey-row--left .journey-content {
@@ -2369,7 +2387,7 @@ section {
   .journey-row--right .journey-connector {
     grid-column: 1 !important;
     grid-row: 1 !important;
-    width: 46px !important;
+    width: 58px !important;
   }
 
   .journey-row--right .journey-circle {
